@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make-up Test Scheduler</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --green: #16a34a;
+      --orange: #f97316;
+      --red: #dc2626;
+      --purple: #7c3aed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+      color: white;
+      padding: 22px 16px;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 6px; font-size: 26px; }
+    header p { margin: 0; opacity: .92; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    button, .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+    }
+    button:hover { background: var(--blue-dark); }
+    button.secondary { background: #e5e7eb; color: #111827; }
+    button.secondary:hover { background: #d1d5db; }
+    button.green { background: var(--green); }
+    button.orange { background: var(--orange); }
+    button.red { background: var(--red); }
+    button.purple { background: var(--purple); }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, .06);
+    }
+    .card h2, .card h3 { margin-top: 0; }
+    label { display: block; font-weight: 700; margin: 12px 0 6px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+      background: white;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .hidden { display: none !important; }
+    .note { color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .status {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: white;
+      background: #64748b;
+    }
+    .status.Pending { background: #64748b; }
+    .status.TeacherAvailable { background: #f97316; }
+    .status.Confirmed { background: #16a34a; }
+    .status.Completed { background: #7c3aed; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .request-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      margin: 12px 0;
+      background: #fbfdff;
+    }
+    .request-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .slot-box {
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 9px;
+      background: white;
+      font-size: 14px;
+    }
+    .mini { font-size: 13px; color: var(--muted); }
+    .danger-zone { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 12px; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .summary div {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .summary strong { display: block; font-size: 24px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 850px; }
+    th, td { border: 1px solid var(--line); padding: 9px; text-align: left; vertical-align: top; }
+    th { background: #eff6ff; }
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 999px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.25);
+      z-index: 20;
+    }
+    @media (max-width: 760px) {
+      .row, .row3, .slots, .summary { grid-template-columns: 1fr; }
+      header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Make-up Test Scheduler</h1>
+    <p>For students who missed a test with a valid reason</p>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="firebaseSetupCard">
+      <h2>Firebase Setup Required</h2>
+      <p class="note">Paste your Firebase config into the <b>firebaseConfig</b> section in this file. After that, this app will sync live with Firestore.</p>
+      <pre style="white-space:pre-wrap;background:#f3f4f6;padding:12px;border-radius:12px;overflow:auto">const firebaseConfig = {
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  projectId: "PASTE_HERE",
+  storageBucket: "PASTE_HERE",
+  messagingSenderId: "PASTE_HERE",
+  appId: "PASTE_HERE"
+};</pre>
+    </section>
+
+    <div class="tabs">
+      <button onclick="showPage('student')">Student Submission</button>
+      <button class="secondary" onclick="showPage('teacherLogin')">Teacher Dashboard</button>
+      <button class="secondary" onclick="showPage('supervision')">Supervision List</button>
+    </div>
+
+    <section id="studentPage" class="card">
+      <h2>Student Submission</h2>
+      <p class="note">Submit 3 possible free slots. Your class teacher may be different from the teacher supervising your make-up test.</p>
+      <form id="studentForm">
+        <div class="row">
+          <div>
+            <label>Full Name</label>
+            <input id="studentName" required placeholder="e.g. Tan Kai Ming" />
+          </div>
+          <div>
+            <label>Class</label>
+            <input id="className" required placeholder="e.g. 26S21" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Email Address</label>
+            <input id="studentEmail" type="email" required placeholder="student@email.com" />
+          </div>
+          <div>
+            <label>Phone Number</label>
+            <input id="phone" required placeholder="e.g. 91234567" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Subject / Test Missed</label>
+            <input id="testName" required placeholder="e.g. H2 Economics WA2" />
+          </div>
+          <div>
+            <label>Class Teacher / Tutor</label>
+            <input id="classTeacher" placeholder="e.g. Mr Chua" />
+          </div>
+        </div>
+        <label>Reason for Missing Test</label>
+        <textarea id="reason" required placeholder="e.g. MC, official school event, approved reason"></textarea>
+        <h3>3 Available Slots</h3>
+        <div class="row3">
+          <div>
+            <label>Slot 1</label>
+            <input id="slot1" type="datetime-local" required />
+          </div>
+          <div>
+            <label>Slot 2</label>
+            <input id="slot2" type="datetime-local" required />
+          </div>
+          <div>
+            <label>Slot 3</label>
+            <input id="slot3" type="datetime-local" required />
+          </div>
+        </div>
+        <div class="toolbar">
+          <button type="submit" class="green">Submit Request</button>
+          <button type="reset" class="secondary">Clear</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="teacherLoginPage" class="card hidden">
+      <h2>Teacher Dashboard Login</h2>
+      <p class="note">Default PIN is <b>1234</b>. Change it inside the code under <b>TEACHER_PIN</b>.</p>
+      <label>Teacher PIN</label>
+      <input id="teacherPin" type="password" placeholder="Enter PIN" />
+      <div class="toolbar">
+        <button onclick="loginTeacher()">Enter Dashboard</button>
+      </div>
+    </section>
+
+    <section id="teacherPage" class="hidden">
+      <div class="summary">
+        <div><strong id="pendingCount">0</strong><span>Pending</span></div>
+        <div><strong id="availableCount">0</strong><span>Teacher Available</span></div>
+        <div><strong id="confirmedCount">0</strong><span>Confirmed</span></div>
+        <div><strong id="completedCount">0</strong><span>Completed</span></div>
+      </div>
+      <section class="card">
+        <div class="request-top">
+          <div>
+            <h2>Teacher Dashboard</h2>
+            <p class="note">Class teacher and supervising teacher are recorded separately.</p>
+          </div>
+          <div class="toolbar">
+            <select id="statusFilter" onchange="renderRequests()">
+              <option value="All">All</option>
+              <option value="Pending">Pending</option>
+              <option value="Teacher Available">Teacher Available</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div id="requestsList"></div>
+      </section>
+    </section>
+
+    <section id="supervisionPage" class="card hidden">
+      <h2>Supervision List</h2>
+      <p class="note">Confirmed and completed make-up test arrangements.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Class</th>
+              <th>Test</th>
+              <th>Class Teacher</th>
+              <th>Supervising Teacher</th>
+              <th>Confirmed Slot</th>
+              <th>Venue</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="supervisionBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      doc,
+      onSnapshot,
+      serverTimestamp,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // 1) Paste your Firebase config here.
+    // 2) Enable Firestore Database in Firebase console.
+    // 3) For quick testing, set Firestore rules to allow read/write. Tighten rules before real use.
+    const firebaseConfig = {
+      apiKey: "PASTE_YOUR_API_KEY_HERE",
+      authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
+      projectId: "PASTE_YOUR_PROJECT_ID_HERE",
+      storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
+      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
+      appId: "PASTE_YOUR_APP_ID_HERE"
+    };
+
+    const TEACHER_PIN = "1234";
+
+    let db = null;
+    let requests = [];
+
+    const usingFirebase = !firebaseConfig.apiKey.includes("PASTE_YOUR");
+
+    if (usingFirebase) {
+      document.getElementById("firebaseSetupCard").classList.add("hidden");
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      const q = query(collection(db, "makeupRequests"), orderBy("createdAt", "desc"));
+      onSnapshot(q, (snapshot) => {
+        requests = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderRequests();
+        renderSupervision();
+        updateCounts();
+      });
+    }
+
+    function $(id) { return document.getElementById(id); }
+
+    function showToast(msg) {
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.remove("hidden");
+      setTimeout(() => t.classList.add("hidden"), 2500);
+    }
+
+    function formatDT(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return value;
+      return d.toLocaleString("en-SG", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+    }
+
+    window.showPage = function(page) {
+      ["studentPage", "teacherLoginPage", "teacherPage", "supervisionPage"].forEach(id => $(id).classList.add("hidden"));
+      if (page === "student") $("studentPage").classList.remove("hidden");
+      if (page === "teacherLogin") $("teacherLoginPage").classList.remove("hidden");
+      if (page === "teacher") $("teacherPage").classList.remove("hidden");
+      if (page === "supervision") $("supervisionPage").classList.remove("hidden");
+    };
+
+    window.loginTeacher = function() {
+      if ($("teacherPin").value === TEACHER_PIN) {
+        showPage("teacher");
+        showToast("Teacher dashboard unlocked");
+      } else {
+        showToast("Incorrect PIN");
+      }
+    };
+
+    $("studentForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!usingFirebase) {
+        showToast("Paste Firebase config first");
+        return;
+      }
+      const data = {
+        studentName: $("studentName").value.trim(),
+        className: $("className").value.trim(),
+        studentEmail: $("studentEmail").value.trim(),
+        phone: $("phone").value.trim(),
+        testName: $("testName").value.trim(),
+        classTeacher: $("classTeacher").value.trim(),
+        reason: $("reason").value.trim(),
+        slot1: $("slot1").value,
+        slot2: $("slot2").value,
+        slot3: $("slot3").value,
+        status: "Pending",
+        supervisingTeacher: "",
+        supervisingTeacherEmail: "",
+        confirmedSlot: "",
+        venue: "",
+        teacherRemarks: "",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      try {
+        await addDoc(collection(db, "makeupRequests"), data);
+        e.target.reset();
+        showToast("Request submitted successfully");
+      } catch (err) {
+        console.error(err);
+        showToast("Submission failed. Check Firebase rules.");
+      }
+    });
+
+    window.renderRequests = function() {
+      const list = $("requestsList");
+      const filter = $("statusFilter") ? $("statusFilter").value : "All";
+      const filtered = requests.filter(r => filter === "All" || r.status === filter);
+      if (!usingFirebase) {
+        list.innerHTML = `<p class="note">Paste Firebase config first.</p>`;
+        return;
+      }
+      if (filtered.length === 0) {
+        list.innerHTML = `<p class="note">No requests found.</p>`;
+        return;
+      }
+      list.innerHTML = filtered.map(r => requestHTML(r)).join("");
+    };
+
+    function requestHTML(r) {
+      const safeStatus = (r.status || "Pending").replace(/\s/g, "");
+      return `
+        <div class="request-card">
+          <div class="request-top">
+            <div>
+              <h3>${escapeHTML(r.studentName)} <span class="mini">${escapeHTML(r.className)}</span></h3>
+              <div class="mini"><b>Test:</b> ${escapeHTML(r.testName || "-")}</div>
+              <div class="mini"><b>Class Teacher:</b> ${escapeHTML(r.classTeacher || "Not stated")}</div>
+              <div class="mini"><b>Email:</b> ${escapeHTML(r.studentEmail || "-")} | <b>Phone:</b> ${escapeHTML(r.phone || "-")}</div>
+              <div class="mini"><b>Reason:</b> ${escapeHTML(r.reason || "-")}</div>
+            </div>
+            <span class="status ${safeStatus}">${escapeHTML(r.status || "Pending")}</span>
+          </div>
+
+          <div class="slots">
+            <div class="slot-box"><b>Slot 1</b><br>${formatDT(r.slot1)}</div>
+            <div class="slot-box"><b>Slot 2</b><br>${formatDT(r.slot2)}</div>
+            <div class="slot-box"><b>Slot 3</b><br>${formatDT(r.slot3)}</div>
+          </div>
+
+          <div class="row3">
+            <div>
+              <label>Supervising Teacher</label>
+              <input id="supTeacher-${r.id}" value="${escapeAttr(r.supervisingTeacher || "")}" placeholder="e.g. Mr Lim" />
+            </div>
+            <div>
+              <label>Supervising Teacher Email</label>
+              <input id="supEmail-${r.id}" value="${escapeAttr(r.supervisingTeacherEmail || "")}" placeholder="teacher@moe.edu.sg" />
+            </div>
+            <div>
+              <label>Venue</label>
+              <input id="venue-${r.id}" value="${escapeAttr(r.venue || "")}" placeholder="e.g. LT4 / Classroom" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Confirmed Slot</label>
+              <select id="confirmedSlot-${r.id}">
+                <option value="">Select slot</option>
+                ${slotOption(r.confirmedSlot, r.slot1, "Slot 1")}
+                ${slotOption(r.confirmedSlot, r.slot2, "Slot 2")}
+                ${slotOption(r.confirmedSlot, r.slot3, "Slot 3")}
+              </select>
+            </div>
+            <div>
+              <label>Teacher Remarks</label>
+              <input id="remarks-${r.id}" value="${escapeAttr(r.teacherRemarks || "")}" placeholder="Optional remarks" />
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <button class="orange" onclick="saveTeacherAvailability('${r.id}', 'Teacher Available')">Save Teacher Availability</button>
+            <button class="green" onclick="saveTeacherAvailability('${r.id}', 'Confirmed')">Confirm Arrangement</button>
+            <button class="purple" onclick="saveTeacherAvailability('${r.id}', 'Completed')">Mark Completed</button>
+            <button class="secondary" onclick="copyStudentEmail('${r.id}')">Copy Student Email</button>
+            <button class="secondary" onclick="copyTeacherEmail('${r.id}')">Copy Teacher Email</button>
+          </div>
+
+          <div class="danger-zone">
+            <button class="red" onclick="deleteRequest('${r.id}')">Delete Request</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function slotOption(selected, value, label) {
+      if (!value) return "";
+      const isSelected = selected === value ? "selected" : "";
+      return `<option value="${escapeAttr(value)}" ${isSelected}>${label}: ${formatDT(value)}</option>`;
+    }
+
+    window.saveTeacherAvailability = async function(id, status) {
+      const payload = {
+        supervisingTeacher: $(`supTeacher-${id}`).value.trim(),
+        supervisingTeacherEmail: $(`supEmail-${id}`).value.trim(),
+        venue: $(`venue-${id}`).value.trim(),
+        confirmedSlot: $(`confirmedSlot-${id}`).value,
+        teacherRemarks: $(`remarks-${id}`).value.trim(),
+        status,
+        updatedAt: serverTimestamp()
+      };
+      if ((status === "Confirmed" || status === "Completed") && (!payload.supervisingTeacher || !payload.confirmedSlot || !payload.venue)) {
+        showToast("Add supervising teacher, confirmed slot and venue first");
+        return;
+      }
+      try {
+        await updateDoc(doc(db, "makeupRequests", id), payload);
+        showToast("Saved");
+      } catch (err) {
+        console.error(err);
+        showToast("Save failed");
+      }
+    };
+
+    window.deleteRequest = async function(id) {
+      if (!confirm("Delete this request?")) return;
+      try {
+        await deleteDoc(doc(db, "makeupRequests", id));
+        showToast("Deleted");
+      } catch (err) {
+        console.error(err);
+        showToast("Delete failed");
+      }
+    };
+
+    window.copyStudentEmail = async function(id) {
+      const r = requests.find(x => x.id === id);
+      const text = `Subject: Make-up Test Arrangement - ${r.testName || "Test"}\n\nDear ${r.studentName},\n\nYour make-up test arrangement is as follows:\n\nTest: ${r.testName || "-"}\nConfirmed slot: ${formatDT(r.confirmedSlot)}\nVenue: ${r.venue || "-"}\nSupervising teacher: ${r.supervisingTeacher || "-"}\n\nPlease be punctual and bring the required materials.\n\nThank you.`;
+      await navigator.clipboard.writeText(text);
+      showToast("Student email copied");
+    };
+
+    window.copyTeacherEmail = async function(id) {
+      const r = requests.find(x => x.id === id);
+      const text = `Subject: Supervision for Make-up Test - ${r.studentName}\n\nDear ${r.supervisingTeacher || "Teacher"},\n\nThank you for helping to supervise this make-up test.\n\nStudent: ${r.studentName}\nClass: ${r.className}\nTest: ${r.testName || "-"}\nClass teacher: ${r.classTeacher || "-"}\nConfirmed slot: ${formatDT(r.confirmedSlot)}\nVenue: ${r.venue || "-"}\nStudent email: ${r.studentEmail || "-"}\nStudent phone: ${r.phone || "-"}\n\nRemarks: ${r.teacherRemarks || "-"}\n\nThank you.`;
+      await navigator.clipboard.writeText(text);
+      showToast("Teacher email copied");
+    };
+
+    function renderSupervision() {
+      const body = $("supervisionBody");
+      const rows = requests.filter(r => ["Confirmed", "Completed"].includes(r.status));
+      if (rows.length === 0) {
+        body.innerHTML = `<tr><td colspan="8">No confirmed arrangements yet.</td></tr>`;
+        return;
+      }
+      body.innerHTML = rows.map(r => `
+        <tr>
+          <td>${escapeHTML(r.studentName)}</td>
+          <td>${escapeHTML(r.className)}</td>
+          <td>${escapeHTML(r.testName || "-")}</td>
+          <td>${escapeHTML(r.classTeacher || "-")}</td>
+          <td>${escapeHTML(r.supervisingTeacher || "-")}</td>
+          <td>${formatDT(r.confirmedSlot)}</td>
+          <td>${escapeHTML(r.venue || "-")}</td>
+          <td>${escapeHTML(r.status || "-")}</td>
+        </tr>
+      `).join("");
+    }
+
+    function updateCounts() {
+      $("pendingCount").textContent = requests.filter(r => r.status === "Pending").length;
+      $("availableCount").textContent = requests.filter(r => r.status === "Teacher Available").length;
+      $("confirmedCount").textContent = requests.filter(r => r.status === "Confirmed").length;
+      $("completedCount").textContent = requests.filter(r => r.status === "Completed").length;
+    }
+
+    function escapeHTML(value) {
+      return String(value || "").replace(/[&<>'"]/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[c]));
+    }
+    function escapeAttr(value) { return escapeHTML(value); }
+  </script>
+</body>
+</html>
