@@ -5,593 +5,208 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Make-up Test Scheduler</title>
   <style>
-    :root {
-      --bg: #f4f7fb;
-      --card: #ffffff;
-      --ink: #1f2937;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --blue: #2563eb;
-      --blue-dark: #1d4ed8;
-      --green: #16a34a;
-      --orange: #f97316;
-      --red: #dc2626;
-      --purple: #7c3aed;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-    }
-    header {
-      background: linear-gradient(135deg, #1d4ed8, #7c3aed);
-      color: white;
-      padding: 22px 16px;
-      text-align: center;
-    }
-    header h1 { margin: 0 0 6px; font-size: 26px; }
-    header p { margin: 0; opacity: .92; }
-    .wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
-    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-    button, .btn {
-      border: 0;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--blue);
-      color: white;
-    }
-    button:hover { background: var(--blue-dark); }
-    button.secondary { background: #e5e7eb; color: #111827; }
-    button.secondary:hover { background: #d1d5db; }
-    button.green { background: var(--green); }
-    button.orange { background: var(--orange); }
-    button.red { background: var(--red); }
-    button.purple { background: var(--purple); }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 8px 22px rgba(15, 23, 42, .06);
-    }
-    .card h2, .card h3 { margin-top: 0; }
-    label { display: block; font-weight: 700; margin: 12px 0 6px; }
-    input, select, textarea {
-      width: 100%;
-      padding: 11px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      font-size: 15px;
-      background: white;
-    }
-    textarea { min-height: 80px; resize: vertical; }
-    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .hidden { display: none !important; }
-    .note { color: var(--muted); font-size: 14px; line-height: 1.45; }
-    .status {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: 800;
-      color: white;
-      background: #64748b;
-    }
-    .status.Pending { background: #64748b; }
-    .status.TeacherAvailable { background: #f97316; }
-    .status.Confirmed { background: #16a34a; }
-    .status.Completed { background: #7c3aed; }
-    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
-    .request-card {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
-      margin: 12px 0;
-      background: #fbfdff;
-    }
-    .request-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-    .slots {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .slot-box {
-      border: 1px dashed #cbd5e1;
-      border-radius: 10px;
-      padding: 9px;
-      background: white;
-      font-size: 14px;
-    }
-    .mini { font-size: 13px; color: var(--muted); }
-    .danger-zone { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 12px; }
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .summary div {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-    }
-    .summary strong { display: block; font-size: 24px; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 850px; }
-    th, td { border: 1px solid var(--line); padding: 9px; text-align: left; vertical-align: top; }
-    th { background: #eff6ff; }
-    .toast {
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #111827;
-      color: white;
-      padding: 12px 16px;
-      border-radius: 999px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.25);
-      z-index: 20;
-    }
-    @media (max-width: 760px) {
-      .row, .row3, .slots, .summary { grid-template-columns: 1fr; }
-      header h1 { font-size: 22px; }
-    }
+    :root{--blue:#2563eb;--purple:#7c3aed;--green:#16a34a;--red:#dc2626;--amber:#f59e0b;--gray:#e5e7eb;--dark:#111827;}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#0f172a} header{background:linear-gradient(90deg,#1d4ed8,#7c3aed);color:white;text-align:center;padding:22px 16px} header h1{margin:0 0 6px;font-size:28px} header p{margin:0}.wrap{max-width:1200px;margin:0 auto;padding:18px}.card{background:white;border:1px solid #e5e7eb;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 8px 24px rgba(15,23,42,.06)}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.tab{background:#dbe2ea}.tab.active{background:var(--blue);color:white}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.summary .box{text-align:center;background:white;border:1px solid #e5e7eb;border-radius:12px;padding:14px}.summary .num{font-size:26px;font-weight:800}label{font-weight:700;display:block;margin:10px 0 5px}input,textarea,select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px}textarea{min-height:76px}.btn-primary{background:var(--green);color:white;width:100%;margin-top:14px}.btn-blue{background:var(--blue);color:white}.btn-red{background:var(--red);color:white}.btn-amber{background:var(--amber);color:white}.muted{color:#64748b;font-size:14px}.hidden{display:none!important}.msg{margin-top:10px;font-weight:700}.ok{color:#15803d}.err{color:#dc2626}.badge{display:inline-block;padding:4px 9px;border-radius:999px;background:#e5e7eb;font-size:12px;font-weight:800}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.record{border-left:5px solid var(--blue)}.mini{font-size:13px;color:#475569;line-height:1.45}.details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:10px 0}.details div{background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:10px}.end-summary{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:12px} @media(max-width:800px){.grid,.grid3,.details,.summary{grid-template-columns:1fr}.wrap{padding:12px}header h1{font-size:24px}}
   </style>
 </head>
 <body>
-  <header>
-    <h1>Make-up Test Scheduler</h1>
-    <p>For students who missed a test with a valid reason</p>
-  </header>
+<header><h1>Make-up Test Scheduler</h1><p>For students who missed a test with a valid reason</p></header>
+<div class="wrap">
+  <div class="tabs">
+    <button id="studentTabBtn" class="tab active" onclick="showTab('student')">Student Submission</button>
+    <button id="teacherTabBtn" class="tab" onclick="openTeacherLogin()">Teacher Dashboard</button>
+    <button id="listTabBtn" class="tab" onclick="openTeacherLogin('list')">Supervision List</button>
+  </div>
 
-  <main class="wrap">
-    <section class="card" id="firebaseSetupCard">
-      <h2>Firebase Setup Required</h2>
-      <p class="note">Paste your Firebase config into the <b>firebaseConfig</b> section in this file. After that, this app will sync live with Firestore.</p>
-      <pre style="white-space:pre-wrap;background:#f3f4f6;padding:12px;border-radius:12px;overflow:auto">const firebaseConfig = {
-  apiKey: "AIzaSyDzRkG4vo4ju80BAiZ7NGT7qK-5ZW0R2Bk",
-  authDomain: "makeuptestscheduler-612e1.firebaseapp.com",
-  projectId: "makeuptestscheduler-612e1",
-  storageBucket: "makeuptestscheduler-612e1.firebasestorage.app",
-  messagingSenderId: "1011920732210",
-  appId: "1:1011920732210:web:93a201b642cbcdf97afc2b"
-};</pre>
-    </section>
-
-    <div class="tabs">
-      <button onclick="showPage('student')">Student Submission</button>
-      <button class="secondary" onclick="showPage('teacherLogin')">Teacher Dashboard</button>
-      <button class="secondary" onclick="showPage('supervision')">Supervision List</button>
+  <section id="studentTab" class="card">
+    <h2>Student Submission</h2>
+    <p class="muted">Submit 3 possible free slots. Use the date/time picker. Past date/time slots will be rejected.</p>
+    <div class="grid">
+      <div><label>Full Name</label><input id="studentName" placeholder="e.g. Tan Kai Ming" required></div>
+      <div><label>Class</label><input id="className" placeholder="e.g. 26S21" required></div>
+      <div><label>Email Address</label><input id="studentEmail" type="email" placeholder="student@email.com" required></div>
+      <div><label>Phone Number</label><input id="phone" placeholder="e.g. 91234567" required></div>
+      <div><label>Subject / Test Missed</label><input id="subject" placeholder="e.g. H2 Economics WA2" required></div>
+      <div><label>Class Teacher / Tutor</label><input id="classTeacher" placeholder="e.g. Mr Chua"></div>
     </div>
+    <label>Class Teacher Email</label><input id="classTeacherEmail" type="email" placeholder="teacher@moe.edu.sg">
+    <label>Reason for Missing Test</label><textarea id="reason" placeholder="e.g. MC / official school event / approved reason" required></textarea>
+    <div class="grid3">
+      <div><label>Available Slot 1</label><input id="slot1" type="datetime-local" required></div>
+      <div><label>Available Slot 2</label><input id="slot2" type="datetime-local" required></div>
+      <div><label>Available Slot 3</label><input id="slot3" type="datetime-local" required></div>
+    </div>
+    <button class="btn-primary" onclick="submitRequest()">Submit Request</button>
+    <div id="studentMsg" class="msg"></div>
+  </section>
 
-    <section id="studentPage" class="card">
-      <h2>Student Submission</h2>
-      <p class="note">Submit 3 possible free slots. Your class teacher may be different from the teacher supervising your make-up test.</p>
-      <form id="studentForm">
-        <div class="row">
-          <div>
-            <label>Full Name</label>
-            <input id="studentName" required placeholder="e.g. Tan Kai Ming" />
-          </div>
-          <div>
-            <label>Class</label>
-            <input id="className" required placeholder="e.g. 26S21" />
-          </div>
-        </div>
-        <div class="row">
-          <div>
-            <label>Email Address</label>
-            <input id="studentEmail" type="email" required placeholder="student@email.com" />
-          </div>
-          <div>
-            <label>Phone Number</label>
-            <input id="phone" required placeholder="e.g. 91234567" />
-          </div>
-        </div>
-        <div class="row">
-          <div>
-            <label>Subject / Test Missed</label>
-            <input id="testName" required placeholder="e.g. H2 Economics WA2" />
-          </div>
-          <div>
-            <label>Class Teacher / Tutor</label>
-            <input id="classTeacher" placeholder="e.g. Mr Chua" />
-          </div>
-        </div>
-        <label>Reason for Missing Test</label>
-        <textarea id="reason" required placeholder="e.g. MC, official school event, approved reason"></textarea>
-        <h3>3 Available Slots</h3>
-        <div class="row3">
-          <div>
-            <label>Slot 1</label>
-            <input id="slot1" type="datetime-local" required />
-          </div>
-          <div>
-            <label>Slot 2</label>
-            <input id="slot2" type="datetime-local" required />
-          </div>
-          <div>
-            <label>Slot 3</label>
-            <input id="slot3" type="datetime-local" required />
-          </div>
-        </div>
-        <div class="toolbar">
-          <button type="submit" class="green">Submit Request</button>
-          <button type="reset" class="secondary">Clear</button>
-        </div>
-      </form>
-    </section>
+  <section id="loginTab" class="card hidden">
+    <h2>Teacher Dashboard Login</h2>
+    <p class="muted">Enter password to view and update requests.</p>
+    <input id="teacherPassword" type="password" placeholder="Teacher password" onkeydown="if(event.key==='Enter') teacherLogin()">
+    <div class="row"><button class="btn-blue" onclick="teacherLogin()">Login</button></div>
+    <div id="loginMsg" class="msg"></div>
+  </section>
 
-    <section id="teacherLoginPage" class="card hidden">
-      <h2>Teacher Dashboard Login</h2>
-      <p class="note">Default PIN is <b>1234</b>. Change it inside the code under <b>TEACHER_PIN</b>.</p>
-      <label>Teacher PIN</label>
-      <input id="teacherPin" type="password" placeholder="Enter PIN" />
-      <div class="toolbar">
-        <button onclick="loginTeacher()">Enter Dashboard</button>
+  <section id="teacherTab" class="hidden">
+    <div class="summary">
+      <div class="box"><div id="sumPending" class="num">0</div><div>Pending</div></div>
+      <div class="box"><div id="sumTeacher" class="num">0</div><div>Teacher Available</div></div>
+      <div class="box"><div id="sumConfirmed" class="num">0</div><div>Confirmed</div></div>
+      <div class="box"><div id="sumCompleted" class="num">0</div><div>Completed</div></div>
+    </div>
+    <div class="card">
+      <h2>Teacher Dashboard</h2>
+      <p class="muted">Class teacher and supervising teacher are recorded separately. Update the confirmed slot, venue and supervising teacher details here.</p>
+      <div class="grid">
+        <div><label>Filter Status</label><select id="statusFilter" onchange="renderRequests()"><option>All</option><option>Pending</option><option>Teacher Available</option><option>Confirmed</option><option>Completed</option></select></div>
+        <div style="align-self:end" class="row"><button class="btn-blue" onclick="loadRequests()">Refresh Dashboard</button><button class="btn-red" onclick="logoutTeacher()">Logout</button></div>
       </div>
-    </section>
+      <div id="teacherMsg" class="msg"></div>
+    </div>
+    <div id="requestsList"></div>
+    <div id="dashboardEndSummary" class="end-summary"></div>
+  </section>
 
-    <section id="teacherPage" class="hidden">
-      <div class="summary">
-        <div><strong id="pendingCount">0</strong><span>Pending</span></div>
-        <div><strong id="availableCount">0</strong><span>Teacher Available</span></div>
-        <div><strong id="confirmedCount">0</strong><span>Confirmed</span></div>
-        <div><strong id="completedCount">0</strong><span>Completed</span></div>
-      </div>
-      <section class="card">
-        <div class="request-top">
-          <div>
-            <h2>Teacher Dashboard</h2>
-            <p class="note">Class teacher and supervising teacher are recorded separately.</p>
-          </div>
-          <div class="toolbar">
-            <select id="statusFilter" onchange="renderRequests()">
-              <option value="All">All</option>
-              <option value="Pending">Pending</option>
-              <option value="Teacher Available">Teacher Available</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </div>
-        </div>
-        <div id="requestsList"></div>
-      </section>
-    </section>
-
-    <section id="supervisionPage" class="card hidden">
+  <section id="listTab" class="hidden">
+    <div class="card">
       <h2>Supervision List</h2>
-      <p class="note">Confirmed and completed make-up test arrangements.</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Class</th>
-              <th>Test</th>
-              <th>Class Teacher</th>
-              <th>Supervising Teacher</th>
-              <th>Confirmed Slot</th>
-              <th>Venue</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="supervisionBody"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+      <p class="muted">Confirmed / available supervision details for quick checking.</p>
+      <button class="btn-blue" onclick="loadRequests('list')">Refresh List</button>
+    </div>
+    <div id="supervisionList"></div>
+    <div id="listEndSummary" class="end-summary"></div>
+  </section>
+</div>
 
-  <div id="toast" class="toast hidden"></div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      updateDoc,
-      deleteDoc,
-      doc,
-      onSnapshot,
-      serverTimestamp,
-      query,
-      orderBy
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDzRkG4vo4ju80BAiZ7NGT7qK-5ZW0R2Bk",
+    authDomain: "makeuptestscheduler-612e1.firebaseapp.com",
+    projectId: "makeuptestscheduler-612e1",
+    storageBucket: "makeuptestscheduler-612e1.firebasestorage.app",
+    messagingSenderId: "1011920732210",
+    appId: "1:1011920732210:web:93a201b642cbcdf97afc2b"
+  };
 
-    // 1) Paste your Firebase config here.
-    // 2) Enable Firestore Database in Firebase console.
-    // 3) For quick testing, set Firestore rules to allow read/write. Tighten rules before real use.
-    const firebaseConfig = {
-      apiKey: "PASTE_YOUR_API_KEY_HERE",
-      authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
-      projectId: "PASTE_YOUR_PROJECT_ID_HERE",
-      storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
-      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
-      appId: "PASTE_YOUR_APP_ID_HERE"
-    };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  let allRequests = [];
+  let afterLoginTarget = 'teacher';
 
-    const TEACHER_PIN = "1234";
+  function fmtDateTime(value){
+    if(!value) return '';
+    const d = new Date(value);
+    if(isNaN(d)) return value;
+    return d.toLocaleString('en-SG',{weekday:'short',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  }
+  function safe(s){return String(s ?? '').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+  function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+  function setActive(btnId){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById(btnId).classList.add('active')}
+  function hideAll(){['studentTab','loginTab','teacherTab','listTab'].forEach(id=>document.getElementById(id).classList.add('hidden'))}
 
-    let db = null;
-    let requests = [];
-
-    const usingFirebase = !firebaseConfig.apiKey.includes("PASTE_YOUR");
-
-    if (usingFirebase) {
-      document.getElementById("firebaseSetupCard").classList.add("hidden");
-      const app = initializeApp(firebaseConfig);
-      db = getFirestore(app);
-      const q = query(collection(db, "makeupRequests"), orderBy("createdAt", "desc"));
-      onSnapshot(q, (snapshot) => {
-        requests = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderRequests();
-        renderSupervision();
-        updateCounts();
-      });
+  window.showTab = function(tab){
+    hideAll();
+    if(tab==='student'){document.getElementById('studentTab').classList.remove('hidden');setActive('studentTabBtn')}
+    if(tab==='teacher'){document.getElementById('teacherTab').classList.remove('hidden');setActive('teacherTabBtn');loadRequests()}
+    if(tab==='list'){document.getElementById('listTab').classList.remove('hidden');setActive('listTabBtn');loadRequests('list')}
+  }
+  window.openTeacherLogin = function(target='teacher'){
+    afterLoginTarget = target;
+    if(sessionStorage.getItem('teacherOK')==='yes'){ showTab(target); return; }
+    hideAll(); document.getElementById('loginTab').classList.remove('hidden'); setActive(target==='list'?'listTabBtn':'teacherTabBtn');
+  }
+  window.teacherLogin = function(){
+    const pw = document.getElementById('teacherPassword').value;
+    if(pw === 'Economics2026'){
+      sessionStorage.setItem('teacherOK','yes'); document.getElementById('loginMsg').innerHTML=''; document.getElementById('teacherPassword').value=''; showTab(afterLoginTarget);
+    } else {
+      document.getElementById('loginMsg').innerHTML='<span class="err">Wrong password.</span>';
     }
+  }
+  window.logoutTeacher = function(){sessionStorage.removeItem('teacherOK'); showTab('student')}
 
-    function $(id) { return document.getElementById(id); }
-
-    function showToast(msg) {
-      const t = $("toast");
-      t.textContent = msg;
-      t.classList.remove("hidden");
-      setTimeout(() => t.classList.add("hidden"), 2500);
-    }
-
-    function formatDT(value) {
-      if (!value) return "-";
-      const d = new Date(value);
-      if (Number.isNaN(d.getTime())) return value;
-      return d.toLocaleString("en-SG", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-      });
-    }
-
-    window.showPage = function(page) {
-      ["studentPage", "teacherLoginPage", "teacherPage", "supervisionPage"].forEach(id => $(id).classList.add("hidden"));
-      if (page === "student") $("studentPage").classList.remove("hidden");
-      if (page === "teacherLogin") $("teacherLoginPage").classList.remove("hidden");
-      if (page === "teacher") $("teacherPage").classList.remove("hidden");
-      if (page === "supervision") $("supervisionPage").classList.remove("hidden");
+  window.submitRequest = async function(){
+    const msg=document.getElementById('studentMsg'); msg.innerHTML='';
+    const data={
+      studentName:studentName.value.trim(), className:className.value.trim(), studentEmail:studentEmail.value.trim(), phone:phone.value.trim(), subject:subject.value.trim(),
+      classTeacher:classTeacher.value.trim(), classTeacherEmail:classTeacherEmail.value.trim(), reason:reason.value.trim(),
+      slot1:slot1.value, slot2:slot2.value, slot3:slot3.value,
+      supervisingTeacher:'', supervisingTeacherEmail:'', confirmedSlot:'', venue:'', teacherRemarks:'', status:'Pending', createdAt:serverTimestamp()
     };
+    if(!data.studentName||!data.className||!data.studentEmail||!data.phone||!data.subject||!data.reason||!data.slot1||!data.slot2||!data.slot3){msg.innerHTML='<span class="err">Please complete all required fields.</span>';return}
+    if(!validEmail(data.studentEmail)){msg.innerHTML='<span class="err">Please enter a valid student email.</span>';return}
+    const now=new Date(); const dates=[new Date(data.slot1),new Date(data.slot2),new Date(data.slot3)];
+    if(dates.some(d=>isNaN(d))){msg.innerHTML='<span class="err">Please choose real date/time slots.</span>';return}
+    if(dates.some(d=>d<=now)){msg.innerHTML='<span class="err">All 3 slots must be future date and time.</span>';return}
+    const unique = new Set([data.slot1,data.slot2,data.slot3]);
+    if(unique.size<3){msg.innerHTML='<span class="err">Please choose 3 different slots.</span>';return}
+    try{
+      await addDoc(collection(db,'makeupRequests'),data);
+      msg.innerHTML='<span class="ok">Submitted successfully. Your teacher will arrange a make-up test slot.</span>';
+      document.querySelectorAll('#studentTab input,#studentTab textarea').forEach(el=>el.value='');
+    }catch(e){console.error(e);msg.innerHTML='<span class="err">Error submitting request. Check Firestore rules and Firebase config.</span>'}
+  }
 
-    window.loginTeacher = function() {
-      if ($("teacherPin").value === TEACHER_PIN) {
-        showPage("teacher");
-        showToast("Teacher dashboard unlocked");
-      } else {
-        showToast("Incorrect PIN");
-      }
-    };
-
-    $("studentForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!usingFirebase) {
-        showToast("Paste Firebase config first");
-        return;
-      }
-      const data = {
-        studentName: $("studentName").value.trim(),
-        className: $("className").value.trim(),
-        studentEmail: $("studentEmail").value.trim(),
-        phone: $("phone").value.trim(),
-        testName: $("testName").value.trim(),
-        classTeacher: $("classTeacher").value.trim(),
-        reason: $("reason").value.trim(),
-        slot1: $("slot1").value,
-        slot2: $("slot2").value,
-        slot3: $("slot3").value,
-        status: "Pending",
-        supervisingTeacher: "",
-        supervisingTeacherEmail: "",
-        confirmedSlot: "",
-        venue: "",
-        teacherRemarks: "",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      };
-      try {
-        await addDoc(collection(db, "makeupRequests"), data);
-        e.target.reset();
-        showToast("Request submitted successfully");
-      } catch (err) {
-        console.error(err);
-        showToast("Submission failed. Check Firebase rules.");
-      }
-    });
-
-    window.renderRequests = function() {
-      const list = $("requestsList");
-      const filter = $("statusFilter") ? $("statusFilter").value : "All";
-      const filtered = requests.filter(r => filter === "All" || r.status === filter);
-      if (!usingFirebase) {
-        list.innerHTML = `<p class="note">Paste Firebase config first.</p>`;
-        return;
-      }
-      if (filtered.length === 0) {
-        list.innerHTML = `<p class="note">No requests found.</p>`;
-        return;
-      }
-      list.innerHTML = filtered.map(r => requestHTML(r)).join("");
-    };
-
-    function requestHTML(r) {
-      const safeStatus = (r.status || "Pending").replace(/\s/g, "");
-      return `
-        <div class="request-card">
-          <div class="request-top">
-            <div>
-              <h3>${escapeHTML(r.studentName)} <span class="mini">${escapeHTML(r.className)}</span></h3>
-              <div class="mini"><b>Test:</b> ${escapeHTML(r.testName || "-")}</div>
-              <div class="mini"><b>Class Teacher:</b> ${escapeHTML(r.classTeacher || "Not stated")}</div>
-              <div class="mini"><b>Email:</b> ${escapeHTML(r.studentEmail || "-")} | <b>Phone:</b> ${escapeHTML(r.phone || "-")}</div>
-              <div class="mini"><b>Reason:</b> ${escapeHTML(r.reason || "-")}</div>
-            </div>
-            <span class="status ${safeStatus}">${escapeHTML(r.status || "Pending")}</span>
-          </div>
-
-          <div class="slots">
-            <div class="slot-box"><b>Slot 1</b><br>${formatDT(r.slot1)}</div>
-            <div class="slot-box"><b>Slot 2</b><br>${formatDT(r.slot2)}</div>
-            <div class="slot-box"><b>Slot 3</b><br>${formatDT(r.slot3)}</div>
-          </div>
-
-          <div class="row3">
-            <div>
-              <label>Supervising Teacher</label>
-              <input id="supTeacher-${r.id}" value="${escapeAttr(r.supervisingTeacher || "")}" placeholder="e.g. Mr Lim" />
-            </div>
-            <div>
-              <label>Supervising Teacher Email</label>
-              <input id="supEmail-${r.id}" value="${escapeAttr(r.supervisingTeacherEmail || "")}" placeholder="teacher@moe.edu.sg" />
-            </div>
-            <div>
-              <label>Venue</label>
-              <input id="venue-${r.id}" value="${escapeAttr(r.venue || "")}" placeholder="e.g. LT4 / Classroom" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Confirmed Slot</label>
-              <select id="confirmedSlot-${r.id}">
-                <option value="">Select slot</option>
-                ${slotOption(r.confirmedSlot, r.slot1, "Slot 1")}
-                ${slotOption(r.confirmedSlot, r.slot2, "Slot 2")}
-                ${slotOption(r.confirmedSlot, r.slot3, "Slot 3")}
-              </select>
-            </div>
-            <div>
-              <label>Teacher Remarks</label>
-              <input id="remarks-${r.id}" value="${escapeAttr(r.teacherRemarks || "")}" placeholder="Optional remarks" />
-            </div>
-          </div>
-
-          <div class="toolbar">
-            <button class="orange" onclick="saveTeacherAvailability('${r.id}', 'Teacher Available')">Save Teacher Availability</button>
-            <button class="green" onclick="saveTeacherAvailability('${r.id}', 'Confirmed')">Confirm Arrangement</button>
-            <button class="purple" onclick="saveTeacherAvailability('${r.id}', 'Completed')">Mark Completed</button>
-            <button class="secondary" onclick="copyStudentEmail('${r.id}')">Copy Student Email</button>
-            <button class="secondary" onclick="copyTeacherEmail('${r.id}')">Copy Teacher Email</button>
-          </div>
-
-          <div class="danger-zone">
-            <button class="red" onclick="deleteRequest('${r.id}')">Delete Request</button>
-          </div>
+  window.loadRequests = async function(target='teacher'){
+    try{
+      const q=query(collection(db,'makeupRequests'),orderBy('createdAt','desc'));
+      const snap=await getDocs(q);
+      allRequests=[]; snap.forEach(s=>allRequests.push({id:s.id,...s.data()}));
+      updateSummary();
+      if(target==='list') renderSupervisionList(); else renderRequests();
+    }catch(e){console.error(e); document.getElementById('teacherMsg').innerHTML='<span class="err">Error loading. Check Firestore rules.</span>'}
+  }
+  function updateSummary(){
+    const c={Pending:0,'Teacher Available':0,Confirmed:0,Completed:0}; allRequests.forEach(r=>{c[r.status||'Pending']=(c[r.status||'Pending']||0)+1});
+    sumPending.textContent=c.Pending||0; sumTeacher.textContent=c['Teacher Available']||0; sumConfirmed.textContent=c.Confirmed||0; sumCompleted.textContent=c.Completed||0;
+  }
+  window.renderRequests = function(){
+    const filter=statusFilter.value; const list=requestsList; list.innerHTML='';
+    const rows=allRequests.filter(r=>filter==='All'||(r.status||'Pending')===filter);
+    teacherMsg.innerHTML='<span class="ok">'+rows.length+' request(s) shown.</span>';
+    if(rows.length===0){list.innerHTML='<div class="card">No requests found.</div>'}
+    rows.forEach(r=>{
+      const div=document.createElement('div'); div.className='card record';
+      div.innerHTML=`
+        <h3>${safe(r.studentName)} <span class="badge">${safe(r.status||'Pending')}</span></h3>
+        <div class="details">
+          <div><b>Student Details</b><p class="mini">Class: ${safe(r.className)}<br>Email: ${safe(r.studentEmail)}<br>Phone: ${safe(r.phone)}<br>Test: ${safe(r.subject)}</p></div>
+          <div><b>Class Teacher</b><p class="mini">${safe(r.classTeacher||'-')}<br>${safe(r.classTeacherEmail||'-')}<br>Reason: ${safe(r.reason||'')}</p></div>
+          <div><b>Student's 3 Slots</b><p class="mini">1. ${safe(fmtDateTime(r.slot1))}<br>2. ${safe(fmtDateTime(r.slot2))}<br>3. ${safe(fmtDateTime(r.slot3))}</p></div>
         </div>
-      `;
-    }
-
-    function slotOption(selected, value, label) {
-      if (!value) return "";
-      const isSelected = selected === value ? "selected" : "";
-      return `<option value="${escapeAttr(value)}" ${isSelected}>${label}: ${formatDT(value)}</option>`;
-    }
-
-    window.saveTeacherAvailability = async function(id, status) {
-      const payload = {
-        supervisingTeacher: $(`supTeacher-${id}`).value.trim(),
-        supervisingTeacherEmail: $(`supEmail-${id}`).value.trim(),
-        venue: $(`venue-${id}`).value.trim(),
-        confirmedSlot: $(`confirmedSlot-${id}`).value,
-        teacherRemarks: $(`remarks-${id}`).value.trim(),
-        status,
-        updatedAt: serverTimestamp()
-      };
-      if ((status === "Confirmed" || status === "Completed") && (!payload.supervisingTeacher || !payload.confirmedSlot || !payload.venue)) {
-        showToast("Add supervising teacher, confirmed slot and venue first");
-        return;
-      }
-      try {
-        await updateDoc(doc(db, "makeupRequests", id), payload);
-        showToast("Saved");
-      } catch (err) {
-        console.error(err);
-        showToast("Save failed");
-      }
-    };
-
-    window.deleteRequest = async function(id) {
-      if (!confirm("Delete this request?")) return;
-      try {
-        await deleteDoc(doc(db, "makeupRequests", id));
-        showToast("Deleted");
-      } catch (err) {
-        console.error(err);
-        showToast("Delete failed");
-      }
-    };
-
-    window.copyStudentEmail = async function(id) {
-      const r = requests.find(x => x.id === id);
-      const text = `Subject: Make-up Test Arrangement - ${r.testName || "Test"}\n\nDear ${r.studentName},\n\nYour make-up test arrangement is as follows:\n\nTest: ${r.testName || "-"}\nConfirmed slot: ${formatDT(r.confirmedSlot)}\nVenue: ${r.venue || "-"}\nSupervising teacher: ${r.supervisingTeacher || "-"}\n\nPlease be punctual and bring the required materials.\n\nThank you.`;
-      await navigator.clipboard.writeText(text);
-      showToast("Student email copied");
-    };
-
-    window.copyTeacherEmail = async function(id) {
-      const r = requests.find(x => x.id === id);
-      const text = `Subject: Supervision for Make-up Test - ${r.studentName}\n\nDear ${r.supervisingTeacher || "Teacher"},\n\nThank you for helping to supervise this make-up test.\n\nStudent: ${r.studentName}\nClass: ${r.className}\nTest: ${r.testName || "-"}\nClass teacher: ${r.classTeacher || "-"}\nConfirmed slot: ${formatDT(r.confirmedSlot)}\nVenue: ${r.venue || "-"}\nStudent email: ${r.studentEmail || "-"}\nStudent phone: ${r.phone || "-"}\n\nRemarks: ${r.teacherRemarks || "-"}\n\nThank you.`;
-      await navigator.clipboard.writeText(text);
-      showToast("Teacher email copied");
-    };
-
-    function renderSupervision() {
-      const body = $("supervisionBody");
-      const rows = requests.filter(r => ["Confirmed", "Completed"].includes(r.status));
-      if (rows.length === 0) {
-        body.innerHTML = `<tr><td colspan="8">No confirmed arrangements yet.</td></tr>`;
-        return;
-      }
-      body.innerHTML = rows.map(r => `
-        <tr>
-          <td>${escapeHTML(r.studentName)}</td>
-          <td>${escapeHTML(r.className)}</td>
-          <td>${escapeHTML(r.testName || "-")}</td>
-          <td>${escapeHTML(r.classTeacher || "-")}</td>
-          <td>${escapeHTML(r.supervisingTeacher || "-")}</td>
-          <td>${formatDT(r.confirmedSlot)}</td>
-          <td>${escapeHTML(r.venue || "-")}</td>
-          <td>${escapeHTML(r.status || "-")}</td>
-        </tr>
-      `).join("");
-    }
-
-    function updateCounts() {
-      $("pendingCount").textContent = requests.filter(r => r.status === "Pending").length;
-      $("availableCount").textContent = requests.filter(r => r.status === "Teacher Available").length;
-      $("confirmedCount").textContent = requests.filter(r => r.status === "Confirmed").length;
-      $("completedCount").textContent = requests.filter(r => r.status === "Completed").length;
-    }
-
-    function escapeHTML(value) {
-      return String(value || "").replace(/[&<>'"]/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-      }[c]));
-    }
-    function escapeAttr(value) { return escapeHTML(value); }
-  </script>
+        <div class="grid">
+          <div><label>Supervising Teacher</label><input id="supTeacher-${r.id}" value="${safe(r.supervisingTeacher||'')}" placeholder="e.g. Ms Lim"></div>
+          <div><label>Supervising Teacher Email</label><input id="supEmail-${r.id}" value="${safe(r.supervisingTeacherEmail||'')}" placeholder="teacher@moe.edu.sg"></div>
+          <div><label>Confirmed Slot</label><select id="confirmedSlot-${r.id}"><option value="">Select slot</option><option value="${safe(r.slot1)}" ${r.confirmedSlot===r.slot1?'selected':''}>${safe(fmtDateTime(r.slot1))}</option><option value="${safe(r.slot2)}" ${r.confirmedSlot===r.slot2?'selected':''}>${safe(fmtDateTime(r.slot2))}</option><option value="${safe(r.slot3)}" ${r.confirmedSlot===r.slot3?'selected':''}>${safe(fmtDateTime(r.slot3))}</option></select></div>
+          <div><label>Venue</label><input id="venue-${r.id}" value="${safe(r.venue||'')}" placeholder="e.g. Room A205"></div>
+          <div><label>Status</label><select id="status-${r.id}"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Teacher Available'?'selected':''}>Teacher Available</option><option ${r.status==='Confirmed'?'selected':''}>Confirmed</option><option ${r.status==='Completed'?'selected':''}>Completed</option></select></div>
+          <div><label>Teacher Remarks</label><input id="remarks-${r.id}" value="${safe(r.teacherRemarks||'')}" placeholder="Remarks"></div>
+        </div>
+        <div class="row"><button class="btn-blue" onclick="updateRequest('${r.id}')">Update Confirmation</button><button class="btn-amber" onclick="copyStudentEmail('${r.id}')">Copy Student Email</button><button class="btn-amber" onclick="copyTeacherEmail('${r.id}')">Copy Supervising Teacher Email</button><button class="btn-red" onclick="deleteRequest('${r.id}')">Delete</button></div>`;
+      list.appendChild(div);
+    });
+    dashboardEndSummary.innerHTML=`<b>Summary:</b> ${allRequests.length} total request(s). Pending: ${sumPending.textContent}, Teacher Available: ${sumTeacher.textContent}, Confirmed: ${sumConfirmed.textContent}, Completed: ${sumCompleted.textContent}.`;
+  }
+  window.updateRequest = async function(id){
+    const data={supervisingTeacher:document.getElementById('supTeacher-'+id).value.trim(),supervisingTeacherEmail:document.getElementById('supEmail-'+id).value.trim(),confirmedSlot:document.getElementById('confirmedSlot-'+id).value,venue:document.getElementById('venue-'+id).value.trim(),status:document.getElementById('status-'+id).value,teacherRemarks:document.getElementById('remarks-'+id).value.trim()};
+    if((data.status==='Confirmed'||data.status==='Completed')&&(!data.supervisingTeacher||!data.confirmedSlot||!data.venue)){alert('For Confirmed/Completed, please fill in supervising teacher, confirmed slot and venue.');return}
+    await updateDoc(doc(db,'makeupRequests',id),data); alert('Updated.'); loadRequests();
+  }
+  window.deleteRequest = async function(id){if(!confirm('Delete this request?'))return; await deleteDoc(doc(db,'makeupRequests',id)); alert('Deleted.'); loadRequests();}
+  function getRec(id){return allRequests.find(r=>r.id===id)}
+  window.copyStudentEmail = async function(id){const r=getRec(id); if(!r)return; const text=`Subject: Make-up Test Arrangement\n\nDear ${r.studentName},\n\nYour make-up test has been arranged.\n\nTest: ${r.subject}\nConfirmed slot: ${fmtDateTime(document.getElementById('confirmedSlot-'+id).value)}\nVenue: ${document.getElementById('venue-'+id).value}\nSupervising teacher: ${document.getElementById('supTeacher-'+id).value}\n\nPlease be punctual and bring the necessary materials.\n\nThank you.`; await navigator.clipboard.writeText(text); alert('Student email copied.')}
+  window.copyTeacherEmail = async function(id){const r=getRec(id); if(!r)return; const text=`Subject: Make-up Test Supervision\n\nDear ${document.getElementById('supTeacher-'+id).value},\n\nThank you for helping to supervise the make-up test.\n\nStudent: ${r.studentName}\nClass: ${r.className}\nTest: ${r.subject}\nConfirmed slot: ${fmtDateTime(document.getElementById('confirmedSlot-'+id).value)}\nVenue: ${document.getElementById('venue-'+id).value}\nStudent email: ${r.studentEmail}\nStudent phone: ${r.phone}\n\nThank you.`; await navigator.clipboard.writeText(text); alert('Supervising teacher email copied.')}
+  function renderSupervisionList(){
+    supervisionList.innerHTML=''; const rows=allRequests.filter(r=>r.status==='Teacher Available'||r.status==='Confirmed'||r.status==='Completed');
+    if(rows.length===0){supervisionList.innerHTML='<div class="card">No supervision details yet.</div>'}
+    rows.forEach(r=>{const div=document.createElement('div');div.className='card';div.innerHTML=`<h3>${safe(r.studentName)} <span class="badge">${safe(r.status)}</span></h3><p><b>Class:</b> ${safe(r.className)} | <b>Test:</b> ${safe(r.subject)}</p><p><b>Supervising Teacher:</b> ${safe(r.supervisingTeacher||'-')} (${safe(r.supervisingTeacherEmail||'-')})</p><p><b>Confirmed Slot:</b> ${safe(fmtDateTime(r.confirmedSlot))}</p><p><b>Venue:</b> ${safe(r.venue||'-')}</p><p><b>Class Teacher:</b> ${safe(r.classTeacher||'-')}</p>`; supervisionList.appendChild(div)});
+    const c={Pending:0,'Teacher Available':0,Confirmed:0,Completed:0}; allRequests.forEach(r=>{c[r.status||'Pending']=(c[r.status||'Pending']||0)+1});
+    listEndSummary.innerHTML=`<b>Summary:</b> ${allRequests.length} total. ${rows.length} with supervision details. Pending: ${c.Pending||0}, Teacher Available: ${c['Teacher Available']||0}, Confirmed: ${c.Confirmed||0}, Completed: ${c.Completed||0}.`;
+  }
+</script>
 </body>
 </html>
