@@ -1,514 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Make-up Test Scheduler</title>
-  <style>
-    :root{
-      --bg:#f4f6f8; --card:#ffffff; --dark:#1f2937; --blue:#2563eb;
-      --green:#16a34a; --orange:#f59e0b; --red:#dc2626; --grey:#e5e7eb;
-    }
-    *{box-sizing:border-box}
-    body{font-family:Arial,sans-serif;margin:0;background:var(--bg);color:#222}
-    header{background:var(--dark);color:#fff;padding:18px;text-align:center}
-    header h1{margin:0 0 6px} header p{margin:0;color:#d1d5db}
-    main{max-width:1250px;margin:auto;padding:20px}
-    .tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-    button{border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:bold}
-    .tab-btn{background:#d1d5db}.tab-btn.active{background:var(--blue);color:#fff}
-    .card{background:var(--card);border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-    label{font-weight:bold;display:block;margin-top:12px}
-    input,textarea,select{width:100%;padding:10px;margin-top:5px;border:1px solid #ccc;border-radius:8px;font-size:15px}
-    textarea{min-height:70px}.hidden{display:none!important}.small{font-size:13px;color:#555}.muted{color:#666}
-    .submit-btn{background:var(--green);color:#fff;margin-top:16px;width:100%}
-    .update-btn{background:var(--blue);color:#fff;margin-top:10px}.copy-btn{background:var(--orange);color:#fff;margin-top:8px}.delete-btn{background:var(--red);color:#fff;margin-top:8px}.complete-btn{background:#059669;color:#fff;margin-top:8px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-    .status{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--grey);font-size:12px;font-weight:bold}
-    .success{color:#15803d;font-weight:bold;margin-top:10px}.error{color:#dc2626;font-weight:bold;margin-top:10px}
-    .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
-    .summary-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center}.summary-box b{font-size:24px;display:block;margin-top:4px}
-    .table-wrap{overflow-x:auto;border:1px solid #e5e7eb;border-radius:10px;background:white}
-    table{width:100%;border-collapse:collapse;min-width:1000px} th,td{border-bottom:1px solid #e5e7eb;padding:10px;text-align:left;vertical-align:top;font-size:14px} th{background:#f3f4f6;position:sticky;top:0;z-index:1} tr:hover{background:#f9fafb}
-    .login-box{max-width:420px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .pill{display:inline-block;border-radius:999px;padding:3px 8px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:bold}
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Make-up Test Scheduler</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f4f6f8;color:#111827}header{background:#1f2937;color:white;text-align:center;padding:22px}header h1{margin:0}header p{margin:6px 0 0;color:#d1d5db}main{max-width:1250px;margin:auto;padding:20px}.tabs{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}button{border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer}.tab-btn{background:#d1d5db}.tab-btn.active,.blue{background:#2563eb;color:white}.green{background:#16a34a;color:white}.orange{background:#f59e0b;color:white}.red{background:#dc2626;color:white}.teal{background:#059669;color:white}.card{background:white;border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 2px 8px #0001}label{font-weight:bold;display:block;margin-top:12px}input,select,textarea{width:100%;padding:10px;margin-top:5px;border:1px solid #cfd4dc;border-radius:8px;font-size:15px;box-sizing:border-box}textarea{min-height:70px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.hidden{display:none!important}.success{color:#15803d;font-weight:bold;margin-top:10px}.error{color:#dc2626;font-weight:bold;margin-top:10px}.small{font-size:13px;color:#4b5563}.status{display:inline-block;background:#e5e7eb;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:bold}.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.summary-box{text-align:center;border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f9fafb}.summary-box b{display:block;font-size:24px}.table-wrap{overflow-x:auto;border:1px solid #e5e7eb;border-radius:10px}table{width:100%;border-collapse:collapse;min-width:1050px}th,td{border-bottom:1px solid #e5e7eb;padding:10px;text-align:left;vertical-align:top;font-size:14px}th{background:#f3f4f6}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.login-box{max-width:420px}.slot-grid{display:grid;grid-template-columns:1fr 160px;gap:10px}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Make-up Test Scheduler</h1>
-    <p>For students who missed a test with valid reason</p>
-  </header>
+<header><h1>Make-up Test Scheduler</h1><p>For students who missed a test with valid reason</p></header>
+<main>
+<div class="tabs"><button id="studentBtn" class="tab-btn active" onclick="showTab('student')">Student Submission</button><button id="teacherBtn" class="tab-btn" onclick="showTab('teacher')">Teacher Dashboard</button></div>
 
-  <main>
-    <div class="tabs">
-      <button class="tab-btn active" id="studentBtn" onclick="showTab('student')">Student Submission</button>
-      <button class="tab-btn" id="teacherBtn" onclick="showTab('teacher')">Teacher Dashboard</button>
-    </div>
+<section id="studentTab">
+<div class="card"><h2>Student Submission Form</h2>
+<div class="grid">
+<div><label>Full Name</label><input id="studentName" placeholder="e.g. Tan Kai Ming"></div>
+<div><label>Class</label><input id="className" placeholder="e.g. 26S21"></div>
+<div><label>Email Address</label><input id="studentEmail" type="email" placeholder="e.g. student@email.com"></div>
+<div><label>Phone Number</label><input id="phone" placeholder="e.g. 91234567"></div>
+<div><label>Subject / Test Missed</label><select id="subject" onchange="toggleOtherSubject()"><option value="">Select Test</option><option>H1 Economics WA1</option><option>H1 Economics WA2</option><option>H2 Economics WA1</option><option>H2 Economics WA2</option><option value="Others">Others</option></select><input id="otherSubject" class="hidden" placeholder="Enter assessment name"></div>
+<div><label>Class Teacher / Tutor</label><input id="classTeacher" placeholder="e.g. Mr Chua"></div>
+<div><label>Class Teacher Email</label><input id="classTeacherEmail" type="email" placeholder="e.g. teacher@moe.edu.sg"></div>
+</div>
+<label>Reason for Missing Test</label><textarea id="reason" placeholder="e.g. MC / official school event / approved reason"></textarea>
+<label>Available Slot 1</label><div class="slot-grid"><select id="slot1Date"></select><select id="slot1Time"></select></div>
+<label>Available Slot 2</label><div class="slot-grid"><select id="slot2Date"></select><select id="slot2Time"></select></div>
+<label>Available Slot 3</label><div class="slot-grid"><select id="slot3Date"></select><select id="slot3Time"></select></div>
+<button class="green" style="width:100%;margin-top:16px" onclick="submitRequest()">Submit Request</button><div id="studentMsg"></div>
+</div>
+</section>
 
-    <section id="studentTab">
-      <div class="card">
-        <h2>Student Submission Form</h2>
-        <p class="small">Choose 3 possible weekday slots. Slots must be between 8.00am and 3.00pm, in 30-minute intervals.</p>
-
-        <label>Full Name</label>
-        <input id="studentName" placeholder="e.g. Tan Kai Ming" />
-
-        <label>Class</label>
-        <input id="className" placeholder="e.g. 26S21" />
-
-        <label>Email Address</label>
-        <input id="studentEmail" type="email" placeholder="e.g. student@school.edu.sg" />
-
-        <label>Phone Number</label>
-        <input id="phone" placeholder="e.g. 91234567" />
-
-        <label>Subject / Test Missed</label>
-        <select id="subject" onchange="toggleOtherSubject()">
-          <option value="">Select Test</option>
-          <optgroup label="Economics">
-            <option>H1 Economics WA1</option>
-            <option>H1 Economics WA2</option>
-            <option>H1 Economics Promotional Examination</option>
-            <option>H2 Economics WA1</option>
-            <option>H2 Economics WA2</option>
-            <option>H2 Economics Promotional Examination</option>
-          </optgroup>
-          <optgroup label="History">
-            <option>H1 History WA1</option>
-            <option>H1 History WA2</option>
-            <option>H2 History WA1</option>
-            <option>H2 History WA2</option>
-          </optgroup>
-          <optgroup label="Mathematics">
-            <option>H1 Mathematics WA1</option>
-            <option>H1 Mathematics WA2</option>
-            <option>H2 Mathematics WA1</option>
-            <option>H2 Mathematics WA2</option>
-          </optgroup>
-          <option value="Others">Others</option>
-        </select>
-        <div id="otherSubjectDiv" class="hidden">
-          <label>Other Assessment Name</label>
-          <input id="otherSubject" placeholder="Enter assessment name" />
-        </div>
-
-        <label>Reason for Missing Test</label>
-        <textarea id="reason" placeholder="e.g. MC / approved school event / valid reason"></textarea>
-
-        <label>Class Teacher Name</label>
-        <input id="classTeacher" placeholder="e.g. Mr Chua" />
-
-        <label>Class Teacher Email</label>
-        <input id="classTeacherEmail" type="email" placeholder="e.g. teacher@moe.edu.sg" />
-
-        <label>Available Slot 1</label>
-        <input id="slot1" type="datetime-local" step="1800" />
-
-        <label>Available Slot 2</label>
-        <input id="slot2" type="datetime-local" step="1800" />
-
-        <label>Available Slot 3</label>
-        <input id="slot3" type="datetime-local" step="1800" />
-
-        <button class="submit-btn" onclick="submitRequest()">Submit Request</button>
-        <div id="studentMsg"></div>
-      </div>
-    </section>
-
-    <section id="teacherTab" class="hidden">
-      <div id="teacherLogin" class="card login-box">
-        <h2>Teacher Dashboard Login</h2>
-        <label>Password</label>
-        <input id="teacherPassword" type="password" placeholder="Enter teacher password" onkeydown="if(event.key==='Enter') loginTeacher()" />
-        <button class="update-btn" onclick="loginTeacher()">Login</button>
-        <div id="loginMsg"></div>
-      </div>
-
-      <div id="dashboardArea" class="hidden">
-        <div class="card">
-          <h2>Teacher Dashboard</h2>
-          <p class="small">Supervising teacher may be different from class teacher. Teachers can update arrangements even after confirmation.</p>
-          <button class="update-btn" onclick="loadRequests()">Refresh Dashboard</button>
-          <button class="copy-btn" onclick="exportCSV()">Export CSV</button>
-          <div id="teacherMsg"></div>
-        </div>
-
-        <div class="card">
-          <h2>Supervision List Summary</h2>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Class</th>
-                  <th>Assessment</th>
-                  <th>Student Slots</th>
-                  <th>Confirmed Slot</th>
-                  <th>Venue</th>
-                  <th>Class Teacher</th>
-                  <th>Supervising Teacher</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="summaryTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div id="requestsList"></div>
-
-        <div class="card">
-          <h2>Dashboard Summary</h2>
-          <div id="dashboardSummary" class="summary-grid"></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc,
-      serverTimestamp, query, orderBy
-    } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDzRkG4vo4ju80BAiZ7NGT7qK-5ZW0R2Bk",
-      authDomain: "makeuptestscheduler-612e1.firebaseapp.com",
-      projectId: "makeuptestscheduler-612e1",
-      storageBucket: "makeuptestscheduler-612e1.firebasestorage.app",
-      messagingSenderId: "1011920732210",
-      appId: "1:1011920732210:web:93a201b642cbcdf97afc2b"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const TEACHER_PASSWORD = "Economics2026";
-    let cachedRequests = [];
-
-    function escapeHtml(value){
-      return String(value ?? "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-    }
-
-    function formatSlot(value){
-      if(!value) return "-";
-      const d = new Date(value);
-      if(Number.isNaN(d.getTime())) return escapeHtml(value);
-      return d.toLocaleString("en-SG", { weekday:"short", day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit", hour12:false });
-    }
-
-    function isValidSchoolSlot(value){
-      if(!value) return {ok:false, msg:"Missing slot."};
-      const d = new Date(value);
-      if(Number.isNaN(d.getTime())) return {ok:false, msg:"Invalid date/time."};
-      const now = new Date();
-      if(d <= now) return {ok:false, msg:"All slots must be in the future."};
-      const day = d.getDay();
-      if(day === 0 || day === 6) return {ok:false, msg:"Slots must be on weekdays only."};
-      const h = d.getHours();
-      const m = d.getMinutes();
-      if(!(m === 0 || m === 30)) return {ok:false, msg:"Slots must be in 30-minute intervals, e.g. 0800 or 0830."};
-      const minutes = h * 60 + m;
-      if(minutes < 8*60 || minutes > 15*60) return {ok:false, msg:"Slots must be between 8.00am and 3.00pm."};
-      return {ok:true};
-    }
-
-    function selectedSubjectValue(){
-      let selected = document.getElementById("subject").value;
-      if(selected === "Others") selected = document.getElementById("otherSubject").value.trim();
-      return selected;
-    }
-
-    window.toggleOtherSubject = function(){
-      const isOther = document.getElementById("subject").value === "Others";
-      document.getElementById("otherSubjectDiv").classList.toggle("hidden", !isOther);
-    };
-
-    window.showTab = function(tab){
-      document.getElementById("studentTab").classList.add("hidden");
-      document.getElementById("teacherTab").classList.add("hidden");
-      document.getElementById("studentBtn").classList.remove("active");
-      document.getElementById("teacherBtn").classList.remove("active");
-      if(tab === "student"){
-        document.getElementById("studentTab").classList.remove("hidden");
-        document.getElementById("studentBtn").classList.add("active");
-      }else{
-        document.getElementById("teacherTab").classList.remove("hidden");
-        document.getElementById("teacherBtn").classList.add("active");
-      }
-    };
-
-    window.loginTeacher = function(){
-      const pw = document.getElementById("teacherPassword").value;
-      const loginMsg = document.getElementById("loginMsg");
-      if(pw !== TEACHER_PASSWORD){
-        loginMsg.innerHTML = '<div class="error">Wrong password.</div>';
-        return;
-      }
-      document.getElementById("teacherLogin").classList.add("hidden");
-      document.getElementById("dashboardArea").classList.remove("hidden");
-      loginMsg.innerHTML = "";
-      loadRequests();
-    };
-
-    window.submitRequest = async function(){
-      const studentMsg = document.getElementById("studentMsg");
-      studentMsg.innerHTML = "";
-      const data = {
-        studentName: document.getElementById("studentName").value.trim(),
-        className: document.getElementById("className").value.trim(),
-        studentEmail: document.getElementById("studentEmail").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        subject: selectedSubjectValue(),
-        reason: document.getElementById("reason").value.trim(),
-        classTeacher: document.getElementById("classTeacher").value.trim(),
-        classTeacherEmail: document.getElementById("classTeacherEmail").value.trim(),
-        slot1: document.getElementById("slot1").value,
-        slot2: document.getElementById("slot2").value,
-        slot3: document.getElementById("slot3").value,
-        supervisingTeacher: "",
-        supervisingTeacherEmail: "",
-        confirmedSlot: "",
-        venue: "",
-        teacherRemarks: "",
-        status: "Pending",
-        completedBy: "",
-        completedAt: "",
-        updatedAt: "",
-        createdAt: serverTimestamp()
-      };
-
-      if(!data.studentName || !data.className || !data.studentEmail || !data.phone || !data.subject || !data.reason || !data.slot1 || !data.slot2 || !data.slot3){
-        studentMsg.innerHTML = '<div class="error">Please complete all required fields.</div>';
-        return;
-      }
-      const slots = [data.slot1,data.slot2,data.slot3];
-      for(let i=0;i<slots.length;i++){
-        const result = isValidSchoolSlot(slots[i]);
-        if(!result.ok){
-          studentMsg.innerHTML = `<div class="error">Slot ${i+1}: ${result.msg}</div>`;
-          return;
-        }
-      }
-      if(new Set(slots).size < 3){
-        studentMsg.innerHTML = '<div class="error">Please provide 3 different available slots.</div>';
-        return;
-      }
-
-      try{
-        await addDoc(collection(db,"makeupRequests"), data);
-        studentMsg.innerHTML = '<div class="success">Submitted successfully. Your teacher will arrange a make-up test slot.</div>';
-        document.querySelectorAll("#studentTab input, #studentTab textarea").forEach(el => el.value = "");
-        document.getElementById("subject").value = "";
-        toggleOtherSubject();
-      }catch(error){
-        console.error(error);
-        studentMsg.innerHTML = '<div class="error">Error submitting request. Check Firebase setup and Firestore rules.</div>';
-      }
-    };
-
-    window.loadRequests = async function(){
-      const list = document.getElementById("requestsList");
-      const teacherMsg = document.getElementById("teacherMsg");
-      list.innerHTML = "";
-      teacherMsg.innerHTML = "Loading...";
-      try{
-        const q = query(collection(db,"makeupRequests"), orderBy("createdAt","desc"));
-        const snapshot = await getDocs(q);
-        cachedRequests = [];
-        snapshot.forEach(docSnap => cachedRequests.push({id: docSnap.id, ...docSnap.data()}));
-        teacherMsg.innerHTML = `<div class="success">${cachedRequests.length} request(s) loaded.</div>`;
-        renderSummaryTable();
-        renderDashboardSummary();
-        if(cachedRequests.length === 0){
-          list.innerHTML = '<div class="card">No make-up test requests yet.</div>';
-          return;
-        }
-        cachedRequests.forEach(renderRequestCard);
-      }catch(error){
-        console.error(error);
-        teacherMsg.innerHTML = '<div class="error">Error loading dashboard. Check Firestore rules.</div>';
-      }
-    };
-
-    function renderSummaryTable(){
-      const body = document.getElementById("summaryTableBody");
-      body.innerHTML = "";
-      if(cachedRequests.length === 0){
-        body.innerHTML = '<tr><td colspan="9">No records yet.</td></tr>';
-        return;
-      }
-      cachedRequests.forEach(d => {
-        body.innerHTML += `
-          <tr>
-            <td>${escapeHtml(d.studentName)}</td>
-            <td>${escapeHtml(d.className)}</td>
-            <td>${escapeHtml(d.subject)}</td>
-            <td>1. ${formatSlot(d.slot1)}<br>2. ${formatSlot(d.slot2)}<br>3. ${formatSlot(d.slot3)}</td>
-            <td>${formatSlot(d.confirmedSlot)}</td>
-            <td>${escapeHtml(d.venue || "-")}</td>
-            <td>${escapeHtml(d.classTeacher || "-")}</td>
-            <td>${escapeHtml(d.supervisingTeacher || "-")}</td>
-            <td><span class="status">${escapeHtml(d.status || "Pending")}</span></td>
-          </tr>`;
-      });
-    }
-
-    function renderDashboardSummary(){
-      const counts = {Total: cachedRequests.length, Pending:0, "Teacher Available":0, Confirmed:0, Completed:0};
-      cachedRequests.forEach(d => counts[d.status || "Pending"] = (counts[d.status || "Pending"] || 0) + 1);
-      document.getElementById("dashboardSummary").innerHTML = Object.entries(counts).map(([k,v]) => `
-        <div class="summary-box"><span>${escapeHtml(k)}</span><b>${v}</b></div>
-      `).join("");
-    }
-
-    function renderRequestCard(d){
-      const list = document.getElementById("requestsList");
-      const id = d.id;
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${escapeHtml(d.studentName)} <span class="status">${escapeHtml(d.status || "Pending")}</span></h3>
-        <div class="grid">
-          <div>
-            <p><b>Class:</b> ${escapeHtml(d.className)}</p>
-            <p><b>Email:</b> ${escapeHtml(d.studentEmail)}</p>
-            <p><b>Phone:</b> ${escapeHtml(d.phone)}</p>
-            <p><b>Assessment:</b> ${escapeHtml(d.subject)}</p>
-          </div>
-          <div>
-            <p><b>Class Teacher:</b> ${escapeHtml(d.classTeacher || "-")}</p>
-            <p><b>Class Teacher Email:</b> ${escapeHtml(d.classTeacherEmail || "-")}</p>
-            <p><b>Reason:</b> ${escapeHtml(d.reason || "")}</p>
-          </div>
-          <div>
-            <p><b>Slot 1:</b> ${formatSlot(d.slot1)}</p>
-            <p><b>Slot 2:</b> ${formatSlot(d.slot2)}</p>
-            <p><b>Slot 3:</b> ${formatSlot(d.slot3)}</p>
-          </div>
-        </div>
-        <hr>
-        <div class="grid">
-          <div>
-            <label>Supervising Teacher Name</label>
-            <input id="supTeacher-${id}" value="${escapeHtml(d.supervisingTeacher || "")}" placeholder="e.g. Ms Lim" />
-          </div>
-          <div>
-            <label>Supervising Teacher Email</label>
-            <input id="supEmail-${id}" value="${escapeHtml(d.supervisingTeacherEmail || "")}" placeholder="e.g. teacher@moe.edu.sg" />
-          </div>
-          <div>
-            <label>Confirmed Slot</label>
-            <select id="confirmedSlot-${id}">
-              <option value="">Select confirmed slot</option>
-              <option value="${escapeHtml(d.slot1 || "")}" ${d.confirmedSlot === d.slot1 ? "selected" : ""}>${formatSlot(d.slot1)}</option>
-              <option value="${escapeHtml(d.slot2 || "")}" ${d.confirmedSlot === d.slot2 ? "selected" : ""}>${formatSlot(d.slot2)}</option>
-              <option value="${escapeHtml(d.slot3 || "")}" ${d.confirmedSlot === d.slot3 ? "selected" : ""}>${formatSlot(d.slot3)}</option>
-            </select>
-          </div>
-          <div>
-            <label>Venue</label>
-            <input id="venue-${id}" value="${escapeHtml(d.venue || "")}" placeholder="e.g. Room A205" />
-          </div>
-          <div>
-            <label>Status</label>
-            <select id="status-${id}">
-              <option value="Pending" ${d.status === "Pending" ? "selected" : ""}>Pending</option>
-              <option value="Teacher Available" ${d.status === "Teacher Available" ? "selected" : ""}>Teacher Available</option>
-              <option value="Confirmed" ${d.status === "Confirmed" ? "selected" : ""}>Confirmed</option>
-              <option value="Completed" ${d.status === "Completed" ? "selected" : ""}>Completed</option>
-            </select>
-          </div>
-        </div>
-        <label>Teacher Remarks</label>
-        <textarea id="remarks-${id}" placeholder="Any remarks">${escapeHtml(d.teacherRemarks || "")}</textarea>
-        ${d.status === "Completed" ? `<p class="small"><span class="pill">Completed</span> ${escapeHtml(d.completedAt ? new Date(d.completedAt).toLocaleString("en-SG") : "")}</p>` : ""}
-        <div class="actions">
-          <button class="update-btn" onclick="updateRequest('${id}')">Update Request</button>
-          <button class="complete-btn" onclick="markCompleted('${id}')">Mark as Completed</button>
-          <button class="copy-btn" onclick="copyStudentEmail('${id}')">Copy Email to Student</button>
-          <button class="copy-btn" onclick="copyTeacherEmail('${id}')">Copy Email to Supervising Teacher</button>
-          <button class="delete-btn" onclick="deleteRequest('${id}')">Delete Request</button>
-        </div>
-      `;
-      list.appendChild(card);
-    }
-
-    window.updateRequest = async function(id){
-      const updateData = {
-        supervisingTeacher: document.getElementById(`supTeacher-${id}`).value.trim(),
-        supervisingTeacherEmail: document.getElementById(`supEmail-${id}`).value.trim(),
-        confirmedSlot: document.getElementById(`confirmedSlot-${id}`).value,
-        venue: document.getElementById(`venue-${id}`).value.trim(),
-        status: document.getElementById(`status-${id}`).value,
-        teacherRemarks: document.getElementById(`remarks-${id}`).value.trim(),
-        updatedAt: new Date().toISOString()
-      };
-      if(updateData.status === "Completed" && !updateData.completedAt){
-        updateData.completedAt = new Date().toISOString();
-        updateData.completedBy = updateData.supervisingTeacher || "Teacher";
-      }
-      try{
-        await updateDoc(doc(db,"makeupRequests",id), updateData);
-        alert("Request updated. You may still make changes later.");
-        loadRequests();
-      }catch(error){
-        console.error(error); alert("Error updating request.");
-      }
-    };
-
-    window.markCompleted = async function(id){
-      const supervisingTeacher = document.getElementById(`supTeacher-${id}`).value.trim();
-      if(!confirm("Confirm that the make-up test has been administered?")) return;
-      try{
-        await updateDoc(doc(db,"makeupRequests",id), {
-          status:"Completed",
-          supervisingTeacher,
-          supervisingTeacherEmail: document.getElementById(`supEmail-${id}`).value.trim(),
-          confirmedSlot: document.getElementById(`confirmedSlot-${id}`).value,
-          venue: document.getElementById(`venue-${id}`).value.trim(),
-          teacherRemarks: document.getElementById(`remarks-${id}`).value.trim(),
-          completedBy: supervisingTeacher || "Teacher",
-          completedAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
-        alert("Marked as completed.");
-        loadRequests();
-      }catch(error){
-        console.error(error); alert("Error marking completed.");
-      }
-    };
-
-    function findRecord(id){ return cachedRequests.find(r => r.id === id); }
-
-    window.copyStudentEmail = async function(id){
-      const r = findRecord(id); if(!r) return;
-      const text = `Subject: Make-up Test Arrangement\n\nDear ${r.studentName},\n\nYour make-up test has been arranged.\n\nTest: ${r.subject}\nConfirmed slot: ${formatSlot(document.getElementById(`confirmedSlot-${id}`).value)}\nVenue: ${document.getElementById(`venue-${id}`).value}\nSupervising teacher: ${document.getElementById(`supTeacher-${id}`).value}\n\nPlease be punctual and bring the necessary materials.\n\nThank you.`;
-      await navigator.clipboard.writeText(text); alert("Email to student copied.");
-    };
-
-    window.copyTeacherEmail = async function(id){
-      const r = findRecord(id); if(!r) return;
-      const text = `Subject: Make-up Test Supervision\n\nDear ${document.getElementById(`supTeacher-${id}`).value},\n\nThank you for helping to supervise the make-up test.\n\nStudent: ${r.studentName}\nClass: ${r.className}\nTest: ${r.subject}\nConfirmed slot: ${formatSlot(document.getElementById(`confirmedSlot-${id}`).value)}\nVenue: ${document.getElementById(`venue-${id}`).value}\n\nStudent email: ${r.studentEmail}\nStudent phone: ${r.phone}\n\nThank you.`;
-      await navigator.clipboard.writeText(text); alert("Email to supervising teacher copied.");
-    };
-
-    window.deleteRequest = async function(id){
-      if(!confirm("Delete this request?")) return;
-      try{ await deleteDoc(doc(db,"makeupRequests",id)); alert("Deleted."); loadRequests(); }
-      catch(error){ console.error(error); alert("Error deleting request."); }
-    };
-
-    window.exportCSV = function(){
-      const headers = ["Student","Class","Email","Phone","Assessment","Reason","Slot 1","Slot 2","Slot 3","Confirmed Slot","Venue","Class Teacher","Supervising Teacher","Status","Completed At"];
-      const rows = cachedRequests.map(r => [r.studentName,r.className,r.studentEmail,r.phone,r.subject,r.reason,formatSlot(r.slot1),formatSlot(r.slot2),formatSlot(r.slot3),formatSlot(r.confirmedSlot),r.venue,r.classTeacher,r.supervisingTeacher,r.status,r.completedAt ? new Date(r.completedAt).toLocaleString("en-SG") : ""]);
-      const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell ?? "").replace(/"/g,'""')}"`).join(",")).join("\n");
-      const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "makeup-test-supervision-list.csv"; a.click(); URL.revokeObjectURL(url);
-    };
-  </script>
-</body>
-</html>
+<section id="teacherTab" class="hidden">
+<div id="loginCard" class="card login-box"><h2>Teacher Login</h2><label>Password</label><input id="teacherPassword" type="password" placeholder="Enter password"><button class="blue" style="margin-top:12px" onclick="loginTeacher()">Enter Dashboard</button><div id="loginMsg"></div></div>
+<div id="dashboard" class="hidden">
+<div class="summary-grid"><div class="summary-box"><b id="pendingCount">0</b>Pending</div><div class="summary-box"><b id="availableCount">0</b>Teacher Available</div><div class="summary-box"><b id="confirmedCount">0</b>Confirmed</div><div class="summary-box"><b id="completedCount">0</b>Completed</div></div>
+<div class="card"><h2>Supervision List</h2><p class="small">This is the summary table. It updates when teachers confirm or complete make-up tests.</p><button class="blue" onclick="loadRequests()">Refresh Dashboard</button> <button class="orange" onclick="exportCSV()">Export CSV</button><div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>Student</th><th>Class</th><th>Assessment</th><th>Chosen Slots</th><th>Confirmed Slot</th><th>Venue</th><th>Class Teacher</th><th>Supervising Teacher</th><th>Status</th></tr></thead><tbody id="supervisionBody"><tr><td colspan="9">No records loaded.</td></tr></tbody></table></div></div>
+<div class="card"><h2>Individual Student Requests</h2><p class="small">Teachers can update arrangements, change timing later, mark completed, or delete requests.</p><div id="teacherMsg"></div></div>
+<div id="requestsList"></div>
+</div>
+</section>
+</main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import{getFirestore,collection,addDoc,getDocs,updateDoc,deleteDoc,doc,serverTimestamp,query,orderBy}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyDzRkG4vo4ju80BAiZ7NGT7qK-5ZW0R2Bk",authDomain:"makeuptestscheduler-612e1.firebaseapp.com",projectId:"makeuptestscheduler-612e1",storageBucket:"makeuptestscheduler-612e1.firebasestorage.app",messagingSenderId:"1011920732210",appId:"1:1011920732210:web:93a201b642cbcdf97afc2b"};
+const app=initializeApp(firebaseConfig),db=getFirestore(app);let teacherLoggedIn=false,cachedRequests=[];
+const $=id=>document.getElementById(id);function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function dateVal(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function dateText(d){return d.toLocaleDateString('en-SG',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})}
+function timeText(t){return t.replace(':','')}
+function fmtSlot(v){if(!v)return'-';const d=new Date(v);if(isNaN(d))return v;return d.toLocaleDateString('en-SG',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})+' '+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')}
+function buildDateOptions(){let html='<option value="">dd/mm/yyyy</option>';let d=new Date();d.setDate(d.getDate()+1);let count=0;while(count<40){const day=d.getDay();if(day!==0&&day!==6){html+=`<option value="${dateVal(d)}">${dateText(d)}</option>`;count++;}d.setDate(d.getDate()+1);}['slot1Date','slot2Date','slot3Date'].forEach(id=>$(id).innerHTML=html)}
+function buildTimeOptions(){const times=['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00'];let html='<option value="">--:-- --</option>';times.forEach(value=>{html+=`<option value="${value}">${timeText(value)}</option>`});['slot1Time','slot2Time','slot3Time'].forEach(id=>$(id).innerHTML=html)}
+function combineSlot(n){const date=$(`slot${n}Date`).value,time=$(`slot${n}Time`).value;return date&&time?`${date}T${time}`:''}
+function validateSlot(v){const d=new Date(v);if(!v||isNaN(d))return'Please choose both date and time.';if(d<=new Date())return'Slot must be in the future.';if([0,6].includes(d.getDay()))return'Only weekdays are allowed.';const h=d.getHours(),m=d.getMinutes();if(h<8||h>15||(h===15&&m!==0))return'Only 0800 to 1500 is allowed.';if(![0,30].includes(m))return'Only 30-minute intervals are allowed.';return''}
+window.toggleOtherSubject=()=> $('otherSubject').classList.toggle('hidden',$('subject').value!=='Others');
+window.showTab=function(tab){$('studentTab').classList.toggle('hidden',tab!=='student');$('teacherTab').classList.toggle('hidden',tab!=='teacher');$('studentBtn').classList.toggle('active',tab==='student');$('teacherBtn').classList.toggle('active',tab==='teacher')}
+window.loginTeacher=function(){if($('teacherPassword').value==='Economics2026'){teacherLoggedIn=true;$('loginCard').classList.add('hidden');$('dashboard').classList.remove('hidden');loadRequests()}else $('loginMsg').innerHTML='<div class="error">Wrong password.</div>'}
+function selectedSubject(){return $('subject').value==='Others' ? $('otherSubject').value.trim() : $('subject').value}
+window.submitRequest=async function(){const msg=$('studentMsg');msg.innerHTML='';const s1=combineSlot(1),s2=combineSlot(2),s3=combineSlot(3);const data={studentName:$('studentName').value.trim(),className:$('className').value.trim(),studentEmail:$('studentEmail').value.trim(),phone:$('phone').value.trim(),subject:selectedSubject(),reason:$('reason').value.trim(),classTeacher:$('classTeacher').value.trim(),classTeacherEmail:$('classTeacherEmail').value.trim(),slot1:s1,slot2:s2,slot3:s3,supervisingTeacher:'',supervisingTeacherEmail:'',confirmedSlot:'',venue:'',teacherRemarks:'',status:'Pending',completedAt:'',createdAt:serverTimestamp()};if(!data.studentName||!data.className||!data.studentEmail||!data.phone||!data.subject||!data.reason||!s1||!s2||!s3){msg.innerHTML='<div class="error">Please complete all required fields.</div>';return}for(const [i,s]of[s1,s2,s3].entries()){const e=validateSlot(s);if(e){msg.innerHTML=`<div class="error">Slot ${i+1}: ${e}</div>`;return}}if(new Set([s1,s2,s3]).size<3){msg.innerHTML='<div class="error">Please choose 3 different slots.</div>';return}try{await addDoc(collection(db,'makeupRequests'),data);msg.innerHTML='<div class="success">Submitted successfully.</div>';document.querySelectorAll('#studentTab input,#studentTab textarea').forEach(e=>e.value='');document.querySelectorAll('#studentTab select').forEach(e=>e.selectedIndex=0);toggleOtherSubject()}catch(e){console.error(e);msg.innerHTML='<div class="error">Submit failed. Check Firebase rules.</div>'}}
+window.loadRequests=async function(){if(!teacherLoggedIn)return;try{const snap=await getDocs(query(collection(db,'makeupRequests'),orderBy('createdAt','desc')));cachedRequests=snap.docs.map(x=>({id:x.id,...x.data()}));$('teacherMsg').innerHTML=`<div class="success">${cachedRequests.length} request(s) loaded.</div>`;renderSummary();renderSupervision();renderCards()}catch(e){console.error(e);$('teacherMsg').innerHTML='<div class="error">Error loading data. Check Firestore rules.</div>'}}
+function renderSummary(){const c={Pending:0,'Teacher Available':0,Confirmed:0,Completed:0};cachedRequests.forEach(r=>c[r.status||'Pending']=(c[r.status||'Pending']||0)+1);$('pendingCount').textContent=c.Pending||0;$('availableCount').textContent=c['Teacher Available']||0;$('confirmedCount').textContent=c.Confirmed||0;$('completedCount').textContent=c.Completed||0}
+function renderSupervision(){const body=$('supervisionBody');body.innerHTML='';if(!cachedRequests.length){body.innerHTML='<tr><td colspan="9">No records yet.</td></tr>';return}cachedRequests.forEach(r=>body.innerHTML+=`<tr><td>${esc(r.studentName)}</td><td>${esc(r.className)}</td><td>${esc(r.subject)}</td><td>1. ${fmtSlot(r.slot1)}<br>2. ${fmtSlot(r.slot2)}<br>3. ${fmtSlot(r.slot3)}</td><td>${fmtSlot(r.confirmedSlot)}</td><td>${esc(r.venue||'-')}</td><td>${esc(r.classTeacher||'-')}</td><td>${esc(r.supervisingTeacher||'-')}<br><span class="small">${esc(r.supervisingTeacherEmail||'')}</span></td><td><span class="status">${esc(r.status||'Pending')}</span></td></tr>`)}
+function renderCards(){const list=$('requestsList');list.innerHTML='';cachedRequests.forEach(r=>{const id=r.id;const div=document.createElement('div');div.className='card';div.innerHTML=`<h3>${esc(r.studentName)} <span class="status">${esc(r.status||'Pending')}</span></h3><div class="grid"><div><p><b>Class:</b> ${esc(r.className)}</p><p><b>Email:</b> ${esc(r.studentEmail)}</p><p><b>Phone:</b> ${esc(r.phone)}</p><p><b>Assessment:</b> ${esc(r.subject)}</p></div><div><p><b>Class Teacher:</b> ${esc(r.classTeacher||'-')}</p><p><b>Reason:</b> ${esc(r.reason||'')}</p></div><div><p><b>Slot 1:</b> ${fmtSlot(r.slot1)}</p><p><b>Slot 2:</b> ${fmtSlot(r.slot2)}</p><p><b>Slot 3:</b> ${fmtSlot(r.slot3)}</p></div></div><hr><div class="grid"><div><label>Supervising Teacher</label><input id="supTeacher-${id}" value="${esc(r.supervisingTeacher||'')}"></div><div><label>Supervising Teacher Email</label><input id="supEmail-${id}" value="${esc(r.supervisingTeacherEmail||'')}"></div><div><label>Confirmed Slot</label><select id="confirmedSlot-${id}"><option value="">Select confirmed slot</option><option value="${esc(r.slot1)}" ${r.confirmedSlot===r.slot1?'selected':''}>${fmtSlot(r.slot1)}</option><option value="${esc(r.slot2)}" ${r.confirmedSlot===r.slot2?'selected':''}>${fmtSlot(r.slot2)}</option><option value="${esc(r.slot3)}" ${r.confirmedSlot===r.slot3?'selected':''}>${fmtSlot(r.slot3)}</option></select></div><div><label>Venue</label><input id="venue-${id}" value="${esc(r.venue||'')}"></div><div><label>Status</label><select id="status-${id}"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Teacher Available'?'selected':''}>Teacher Available</option><option ${r.status==='Confirmed'?'selected':''}>Confirmed</option><option ${r.status==='Completed'?'selected':''}>Completed</option></select></div></div><label>Teacher Remarks</label><textarea id="remarks-${id}">${esc(r.teacherRemarks||'')}</textarea><div class="actions"><button class="blue" onclick="updateRequest('${id}')">Update / Change Arrangement</button><button class="teal" onclick="markCompleted('${id}')">Mark as Completed</button><button class="red" onclick="deleteRequest('${id}')">Delete Request</button></div>`;list.appendChild(div)})}
+window.updateRequest=async id=>{await updateDoc(doc(db,'makeupRequests',id),{supervisingTeacher:$(`supTeacher-${id}`).value.trim(),supervisingTeacherEmail:$(`supEmail-${id}`).value.trim(),confirmedSlot:$(`confirmedSlot-${id}`).value,venue:$(`venue-${id}`).value.trim(),status:$(`status-${id}`).value,teacherRemarks:$(`remarks-${id}`).value.trim(),updatedAt:new Date().toISOString()});await loadRequests()}
+window.markCompleted=async id=>{if(!confirm('Confirm that the make-up test has been administered?'))return;await updateDoc(doc(db,'makeupRequests',id),{status:'Completed',completedAt:new Date().toISOString()});await loadRequests()}
+window.deleteRequest=async id=>{if(!confirm('Delete this request?'))return;await deleteDoc(doc(db,'makeupRequests',id));await loadRequests()}
+window.exportCSV=function(){const headers=['Student','Class','Assessment','Slot 1','Slot 2','Slot 3','Confirmed Slot','Venue','Class Teacher','Supervising Teacher','Status'];const rows=cachedRequests.map(r=>[r.studentName,r.className,r.subject,fmtSlot(r.slot1),fmtSlot(r.slot2),fmtSlot(r.slot3),fmtSlot(r.confirmedSlot),r.venue,r.classTeacher,r.supervisingTeacher,r.status]);const csv=[headers,...rows].map(row=>row.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='makeup-test-supervision-list.csv';a.click()}
+buildDateOptions();buildTimeOptions();
+</script>
+</body></html>
