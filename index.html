@@ -63,9 +63,49 @@ window.submitRequest=async function(){const msg=$('studentMsg');msg.innerHTML=''
 window.loadRequests=async function(){if(!teacherLoggedIn)return;try{const snap=await getDocs(query(collection(db,'makeupRequests'),orderBy('createdAt','desc')));cachedRequests=snap.docs.map(x=>({id:x.id,...x.data()}));$('teacherMsg').innerHTML=`<div class="success">${cachedRequests.length} request(s) loaded.</div>`;renderSummary();renderSupervision();renderCards()}catch(e){console.error(e);$('teacherMsg').innerHTML='<div class="error">Error loading data. Check Firestore rules.</div>'}}
 function renderSummary(){const c={Pending:0,'Teacher Available':0,Confirmed:0,Completed:0};cachedRequests.forEach(r=>c[r.status||'Pending']=(c[r.status||'Pending']||0)+1);$('pendingCount').textContent=c.Pending||0;$('availableCount').textContent=c['Teacher Available']||0;$('confirmedCount').textContent=c.Confirmed||0;$('completedCount').textContent=c.Completed||0}
 function renderSupervision(){const body=$('supervisionBody');body.innerHTML='';if(!cachedRequests.length){body.innerHTML='<tr><td colspan="9">No records yet.</td></tr>';return}cachedRequests.forEach(r=>body.innerHTML+=`<tr><td>${esc(r.studentName)}</td><td>${esc(r.className)}</td><td>${esc(r.subject)}</td><td>1. ${fmtSlot(r.slot1)}<br>2. ${fmtSlot(r.slot2)}<br>3. ${fmtSlot(r.slot3)}</td><td>${fmtSlot(r.confirmedSlot)}</td><td>${esc(r.venue||'-')}</td><td>${esc(r.classTeacher||'-')}</td><td>${esc(r.supervisingTeacher||'-')}<br><span class="small">${esc(r.supervisingTeacherEmail||'')}</span></td><td><span class="status">${esc(r.status||'Pending')}</span></td></tr>`)}
-function renderCards(){const list=$('requestsList');list.innerHTML='';cachedRequests.forEach(r=>{const id=r.id;const div=document.createElement('div');div.className='card';div.innerHTML=`<h3>${esc(r.studentName)} <span class="status">${esc(r.status||'Pending')}</span></h3><div class="grid"><div><p><b>Class:</b> ${esc(r.className)}</p><p><b>Email:</b> ${esc(r.studentEmail)}</p><p><b>Phone:</b> ${esc(r.phone)}</p><p><b>Assessment:</b> ${esc(r.subject)}</p></div><div><p><b>Class Teacher:</b> ${esc(r.classTeacher||'-')}</p><p><b>Reason:</b> ${esc(r.reason||'')}</p></div><div><p><b>Slot 1:</b> ${fmtSlot(r.slot1)}</p><p><b>Slot 2:</b> ${fmtSlot(r.slot2)}</p><p><b>Slot 3:</b> ${fmtSlot(r.slot3)}</p></div></div><hr><div class="grid"><div><label>Supervising Teacher</label><input id="supTeacher-${id}" value="${esc(r.supervisingTeacher||'')}"></div><div><label>Supervising Teacher Email</label><input id="supEmail-${id}" value="${esc(r.supervisingTeacherEmail||'')}"></div><div><label>Confirmed Slot</label><select id="confirmedSlot-${id}"><option value="">Select confirmed slot</option><option value="${esc(r.slot1)}" ${r.confirmedSlot===r.slot1?'selected':''}>${fmtSlot(r.slot1)}</option><option value="${esc(r.slot2)}" ${r.confirmedSlot===r.slot2?'selected':''}>${fmtSlot(r.slot2)}</option><option value="${esc(r.slot3)}" ${r.confirmedSlot===r.slot3?'selected':''}>${fmtSlot(r.slot3)}</option></select></div><div><label>Venue</label><input id="venue-${id}" value="${esc(r.venue||'')}"></div><div><label>Status</label><select id="status-${id}"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Teacher Available'?'selected':''}>Teacher Available</option><option ${r.status==='Confirmed'?'selected':''}>Confirmed</option><option ${r.status==='Completed'?'selected':''}>Completed</option></select></div></div><label>Teacher Remarks</label><textarea id="remarks-${id}">${esc(r.teacherRemarks||'')}</textarea><div class="actions"><button class="blue" onclick="updateRequest('${id}')">Update / Change Arrangement</button><button class="teal" onclick="markCompleted('${id}')">Mark as Completed</button><button class="red" onclick="deleteRequest('${id}')">Delete Request</button></div>`;list.appendChild(div)})}
+function renderCards(){const list=$('requestsList');list.innerHTML='';cachedRequests.forEach(r=>{const id=r.id;const div=document.createElement('div');div.className='card';div.innerHTML=`<h3>${esc(r.studentName)} <span class="status">${esc(r.status||'Pending')}</span></h3><div class="grid"><div><p><b>Class:</b> ${esc(r.className)}</p><p><b>Email:</b> ${esc(r.studentEmail)}</p><p><b>Phone:</b> ${esc(r.phone)}</p><p><b>Assessment:</b> ${esc(r.subject)}</p></div><div><p><b>Class Teacher:</b> ${esc(r.classTeacher||'-')}</p><p><b>Reason:</b> ${esc(r.reason||'')}</p></div><div><p><b>Slot 1:</b> ${fmtSlot(r.slot1)}</p><p><b>Slot 2:</b> ${fmtSlot(r.slot2)}</p><p><b>Slot 3:</b> ${fmtSlot(r.slot3)}</p></div></div><hr><div class="grid"><div><label>Supervising Teacher</label><input id="supTeacher-${id}" value="${esc(r.supervisingTeacher||'')}"></div><div><label>Supervising Teacher Email</label><input id="supEmail-${id}" value="${esc(r.supervisingTeacherEmail||'')}"></div><div><label>Confirmed Slot</label><select id="confirmedSlot-${id}"><option value="">Select confirmed slot</option><option value="${esc(r.slot1)}" ${r.confirmedSlot===r.slot1?'selected':''}>${fmtSlot(r.slot1)}</option><option value="${esc(r.slot2)}" ${r.confirmedSlot===r.slot2?'selected':''}>${fmtSlot(r.slot2)}</option><option value="${esc(r.slot3)}" ${r.confirmedSlot===r.slot3?'selected':''}>${fmtSlot(r.slot3)}</option></select></div><div><label>Venue</label><input id="venue-${id}" value="${esc(r.venue||'')}"></div><div><label>Status</label><select id="status-${id}"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Teacher Available'?'selected':''}>Teacher Available</option><option ${r.status==='Confirmed'?'selected':''}>Confirmed</option><option ${r.status==='Completed'?'selected':''}>Completed</option></select></div></div><label>Teacher Remarks</label><textarea id="remarks-${id}">${esc(r.teacherRemarks||'')}</textarea><div class="actions"><button class="blue" onclick="updateRequest('${id}')">Update / Change Arrangement</button><button class="teal" onclick="markCompleted('${id}')">Mark as Completed</button><button class="orange" onclick="openGmailEmail('${id}')">Send Gmail to All</button><button class="red" onclick="deleteRequest('${id}')">Delete Request</button></div>`;list.appendChild(div)})}
 window.updateRequest=async id=>{await updateDoc(doc(db,'makeupRequests',id),{supervisingTeacher:$(`supTeacher-${id}`).value.trim(),supervisingTeacherEmail:$(`supEmail-${id}`).value.trim(),confirmedSlot:$(`confirmedSlot-${id}`).value,venue:$(`venue-${id}`).value.trim(),status:$(`status-${id}`).value,teacherRemarks:$(`remarks-${id}`).value.trim(),updatedAt:new Date().toISOString()});await loadRequests()}
 window.markCompleted=async id=>{if(!confirm('Confirm that the make-up test has been administered?'))return;await updateDoc(doc(db,'makeupRequests',id),{status:'Completed',completedAt:new Date().toISOString()});await loadRequests()}
+window.openGmailEmail=function(id){
+const r=cachedRequests.find(x=>x.id===id);
+if(!r){alert('Record not found. Refresh dashboard and try again.');return}
+const supTeacher=$(`supTeacher-${id}`).value.trim();
+const supEmail=$(`supEmail-${id}`).value.trim();
+const confirmedSlot=$(`confirmedSlot-${id}`).value;
+const venue=$(`venue-${id}`).value.trim();
+const status=$(`status-${id}`).value;
+if(!r.studentEmail){alert('Student email is missing.');return}
+if(!r.classTeacherEmail){alert('Class teacher email is missing.');return}
+if(!supEmail){alert('Supervising teacher email is missing.');return}
+const to=r.studentEmail;
+const cc=[r.classTeacherEmail,supEmail].filter(Boolean).join(',');
+const subject=`Make-up Test Arrangement - ${r.studentName} (${r.subject})`;
+const body=`Dear ${r.studentName},
+
+Your make-up test has been arranged.
+
+Student: ${r.studentName}
+Class: ${r.className}
+Assessment: ${r.subject}
+
+Confirmed Slot: ${fmtSlot(confirmedSlot)}
+Venue: ${venue || '-'}
+
+Class Teacher / Tutor: ${r.classTeacher || '-'}
+Supervising Teacher: ${supTeacher || '-'}
+
+Status: ${status}
+
+Please be punctual and bring the necessary materials.
+
+Thank you.`;
+const url='https://mail.google.com/mail/?view=cm&fs=1'
++`&to=${encodeURIComponent(to)}`
++`&cc=${encodeURIComponent(cc)}`
++`&su=${encodeURIComponent(subject)}`
++`&body=${encodeURIComponent(body)}`;
+window.open(url,'_blank');
+}
 window.deleteRequest=async id=>{if(!confirm('Delete this request?'))return;await deleteDoc(doc(db,'makeupRequests',id));await loadRequests()}
 window.exportCSV=function(){const headers=['Student','Class','Assessment','Slot 1','Slot 2','Slot 3','Confirmed Slot','Venue','Class Teacher','Supervising Teacher','Status'];const rows=cachedRequests.map(r=>[r.studentName,r.className,r.subject,fmtSlot(r.slot1),fmtSlot(r.slot2),fmtSlot(r.slot3),fmtSlot(r.confirmedSlot),r.venue,r.classTeacher,r.supervisingTeacher,r.status]);const csv=[headers,...rows].map(row=>row.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='makeup-test-supervision-list.csv';a.click()}
 buildDateOptions();buildTimeOptions();
